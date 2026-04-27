@@ -177,7 +177,6 @@ def _collect_items(
                 except Exception as exc:  # pragma: no cover - defensive guard
                     print(
                         f"[annotator] Skipping {image_path}: failed to load ({exc}).",
-                        file=sys.stderr,
                     )
                     continue
 
@@ -1003,7 +1002,6 @@ def serve(args: argparse.Namespace) -> None:
 
     print(
         f"[annotator] Serving {session.item_count()} image(s) at {url}",
-        file=sys.stderr,
     )
 
     if not args.no_browser:
@@ -1011,10 +1009,9 @@ def serve(args: argparse.Namespace) -> None:
         if not opened:
             print(
                 f"[annotator] Browser did not open automatically. Visit {url}",
-                file=sys.stderr,
             )
     else:
-        print(f"[annotator] Browser auto-open disabled. Visit {url}", file=sys.stderr)
+        print(f"[annotator] Browser auto-open disabled. Visit {url}")
 
     try:
         while not session.stop_event.wait(timeout=0.25):
@@ -1025,7 +1022,7 @@ def serve(args: argparse.Namespace) -> None:
         server.shutdown()
         server.server_close()
         thread.join(timeout=2.0)
-        print("[annotator] Server stopped.", file=sys.stderr)
+        print("[annotator] Server stopped.")
 
 
 def main() -> None:
