@@ -1,0 +1,14 @@
+[
+  {
+    "image": "data/test_images/1.png",
+    "count": 29
+  },
+  {
+    "image": "data/test_images/2.png",
+    "count": 21
+  },
+  {
+    "image": "data/test_images/3.png",
+    "count": 11
+  }
+]

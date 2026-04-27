@@ -1,0 +1,26 @@
+{
+  "model": "results/models/detection/best.pt",
+  "iou_threshold": 0.5,
+  "num_images": 24,
+  "num_ground_truth_boxes": 115,
+  "num_predicted_boxes": 114,
+  "detection": {
+    "true_positives": 109,
+    "false_positives": 5,
+    "false_negatives": 6,
+    "precision": 0.956140350877193,
+    "recall": 0.9478260869565217,
+    "f1": 0.9519650655021834,
+    "mean_iou": 0.9132067436569881
+  },
+  "counting": {
+    "bias": -0.041666666666666664,
+    "mae": 0.375,
+    "mse": 0.4583333333333333,
+    "rmse": 0.67700320038633,
+    "min_gt_count": 2,
+    "max_gt_count": 10,
+    "min_pred_count": 2,
+    "max_pred_count": 10
+  }
+}

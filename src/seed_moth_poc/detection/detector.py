@@ -123,7 +123,7 @@ def write_dataset_yaml(dataset_root: Path, yaml_path: Path) -> None:
     """Write a YOLO dataset.yaml file for one-class moth detection."""
     content = "\n".join(
         [
-            f"path: {dataset_root.resolve().as_posix()}",
+            f"path: {dataset_root.as_posix()}",
             "train: images/train",
             "val: images/val",
             "nc: 1",
@@ -251,13 +251,14 @@ def train_yolo_detector(
 ) -> TrainingRun:
     """Train a YOLO detector and return the produced weights."""
     resolved_weights = resolve_pretrained_weights(weights)
+    project_dir = ensure_directory(output_dir).resolve()
     model = YOLO(resolved_weights)
     train_kwargs: dict[str, object] = {
         "data": str(dataset_yaml),
         "epochs": epochs,
         "imgsz": imgsz,
         "batch": batch,
-        "project": str(output_dir),
+        "project": str(project_dir),
         "name": run_name,
         "exist_ok": exist_ok,
         "patience": patience,
@@ -269,8 +270,8 @@ def train_yolo_detector(
         train_kwargs["seed"] = seed
 
     model.train(**train_kwargs)
-    run_dir = output_dir / run_name
-    best_weights = resolve_best_weights(model, output_dir, run_name)
+    run_dir = project_dir / run_name
+    best_weights = resolve_best_weights(model, project_dir, run_name)
     final_weights = run_dir / "weights" / "last.pt"
     if not final_weights.exists():
         final_weights = None

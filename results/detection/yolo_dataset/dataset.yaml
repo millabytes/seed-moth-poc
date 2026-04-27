@@ -1,0 +1,6 @@
+path: /Users/milamarinkovic/PHD/seed-moth-poc/results/detection/yolo_dataset
+train: images/train
+val: images/val
+nc: 1
+names:
+  0: moth

@@ -190,7 +190,7 @@ cython_debug/
 
 # Ruff stuff:
 .ruff_cache/
-results/
+results/**/*.cache
 assets/pretrained/*.pt
 assets/pretrained/*.pth
 

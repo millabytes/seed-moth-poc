@@ -1,0 +1,486 @@
+{
+  "train": [
+    {
+      "image": "data/synthetic/images/synth_0008.png",
+      "label": "data/synthetic/labels/synth_0008.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0002.png",
+      "label": "data/synthetic/labels/synth_0002.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0079.png",
+      "label": "data/synthetic/labels/synth_0079.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0071.png",
+      "label": "data/synthetic/labels/synth_0071.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0027.png",
+      "label": "data/synthetic/labels/synth_0027.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0081.png",
+      "label": "data/synthetic/labels/synth_0081.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0022.png",
+      "label": "data/synthetic/labels/synth_0022.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0053.png",
+      "label": "data/synthetic/labels/synth_0053.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0042.png",
+      "label": "data/synthetic/labels/synth_0042.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0051.png",
+      "label": "data/synthetic/labels/synth_0051.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0067.png",
+      "label": "data/synthetic/labels/synth_0067.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0040.png",
+      "label": "data/synthetic/labels/synth_0040.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0068.png",
+      "label": "data/synthetic/labels/synth_0068.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0035.png",
+      "label": "data/synthetic/labels/synth_0035.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0061.png",
+      "label": "data/synthetic/labels/synth_0061.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0039.png",
+      "label": "data/synthetic/labels/synth_0039.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0060.png",
+      "label": "data/synthetic/labels/synth_0060.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0056.png",
+      "label": "data/synthetic/labels/synth_0056.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0077.png",
+      "label": "data/synthetic/labels/synth_0077.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0023.png",
+      "label": "data/synthetic/labels/synth_0023.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0064.png",
+      "label": "data/synthetic/labels/synth_0064.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0066.png",
+      "label": "data/synthetic/labels/synth_0066.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0024.png",
+      "label": "data/synthetic/labels/synth_0024.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0041.png",
+      "label": "data/synthetic/labels/synth_0041.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0100.png",
+      "label": "data/synthetic/labels/synth_0100.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0113.png",
+      "label": "data/synthetic/labels/synth_0113.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0025.png",
+      "label": "data/synthetic/labels/synth_0025.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0007.png",
+      "label": "data/synthetic/labels/synth_0007.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0057.png",
+      "label": "data/synthetic/labels/synth_0057.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0091.png",
+      "label": "data/synthetic/labels/synth_0091.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0019.png",
+      "label": "data/synthetic/labels/synth_0019.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0050.png",
+      "label": "data/synthetic/labels/synth_0050.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0119.png",
+      "label": "data/synthetic/labels/synth_0119.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0043.png",
+      "label": "data/synthetic/labels/synth_0043.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0003.png",
+      "label": "data/synthetic/labels/synth_0003.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0104.png",
+      "label": "data/synthetic/labels/synth_0104.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0073.png",
+      "label": "data/synthetic/labels/synth_0073.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0074.png",
+      "label": "data/synthetic/labels/synth_0074.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0037.png",
+      "label": "data/synthetic/labels/synth_0037.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0047.png",
+      "label": "data/synthetic/labels/synth_0047.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0038.png",
+      "label": "data/synthetic/labels/synth_0038.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0011.png",
+      "label": "data/synthetic/labels/synth_0011.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0075.png",
+      "label": "data/synthetic/labels/synth_0075.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0016.png",
+      "label": "data/synthetic/labels/synth_0016.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0059.png",
+      "label": "data/synthetic/labels/synth_0059.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0006.png",
+      "label": "data/synthetic/labels/synth_0006.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0034.png",
+      "label": "data/synthetic/labels/synth_0034.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0045.png",
+      "label": "data/synthetic/labels/synth_0045.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0046.png",
+      "label": "data/synthetic/labels/synth_0046.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0013.png",
+      "label": "data/synthetic/labels/synth_0013.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0049.png",
+      "label": "data/synthetic/labels/synth_0049.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0102.png",
+      "label": "data/synthetic/labels/synth_0102.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0111.png",
+      "label": "data/synthetic/labels/synth_0111.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0120.png",
+      "label": "data/synthetic/labels/synth_0120.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0101.png",
+      "label": "data/synthetic/labels/synth_0101.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0020.png",
+      "label": "data/synthetic/labels/synth_0020.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0086.png",
+      "label": "data/synthetic/labels/synth_0086.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0044.png",
+      "label": "data/synthetic/labels/synth_0044.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0105.png",
+      "label": "data/synthetic/labels/synth_0105.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0021.png",
+      "label": "data/synthetic/labels/synth_0021.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0001.png",
+      "label": "data/synthetic/labels/synth_0001.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0116.png",
+      "label": "data/synthetic/labels/synth_0116.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0106.png",
+      "label": "data/synthetic/labels/synth_0106.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0058.png",
+      "label": "data/synthetic/labels/synth_0058.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0114.png",
+      "label": "data/synthetic/labels/synth_0114.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0054.png",
+      "label": "data/synthetic/labels/synth_0054.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0108.png",
+      "label": "data/synthetic/labels/synth_0108.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0090.png",
+      "label": "data/synthetic/labels/synth_0090.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0084.png",
+      "label": "data/synthetic/labels/synth_0084.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0092.png",
+      "label": "data/synthetic/labels/synth_0092.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0026.png",
+      "label": "data/synthetic/labels/synth_0026.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0072.png",
+      "label": "data/synthetic/labels/synth_0072.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0103.png",
+      "label": "data/synthetic/labels/synth_0103.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0078.png",
+      "label": "data/synthetic/labels/synth_0078.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0065.png",
+      "label": "data/synthetic/labels/synth_0065.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0030.png",
+      "label": "data/synthetic/labels/synth_0030.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0028.png",
+      "label": "data/synthetic/labels/synth_0028.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0107.png",
+      "label": "data/synthetic/labels/synth_0107.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0118.png",
+      "label": "data/synthetic/labels/synth_0118.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0005.png",
+      "label": "data/synthetic/labels/synth_0005.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0055.png",
+      "label": "data/synthetic/labels/synth_0055.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0076.png",
+      "label": "data/synthetic/labels/synth_0076.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0012.png",
+      "label": "data/synthetic/labels/synth_0012.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0070.png",
+      "label": "data/synthetic/labels/synth_0070.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0112.png",
+      "label": "data/synthetic/labels/synth_0112.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0087.png",
+      "label": "data/synthetic/labels/synth_0087.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0014.png",
+      "label": "data/synthetic/labels/synth_0014.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0117.png",
+      "label": "data/synthetic/labels/synth_0117.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0018.png",
+      "label": "data/synthetic/labels/synth_0018.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0029.png",
+      "label": "data/synthetic/labels/synth_0029.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0032.png",
+      "label": "data/synthetic/labels/synth_0032.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0036.png",
+      "label": "data/synthetic/labels/synth_0036.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0095.png",
+      "label": "data/synthetic/labels/synth_0095.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0004.png",
+      "label": "data/synthetic/labels/synth_0004.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0015.png",
+      "label": "data/synthetic/labels/synth_0015.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0082.png",
+      "label": "data/synthetic/labels/synth_0082.txt"
+    }
+  ],
+  "val": [
+    {
+      "image": "data/synthetic/images/synth_0010.png",
+      "label": "data/synthetic/labels/synth_0010.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0085.png",
+      "label": "data/synthetic/labels/synth_0085.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0096.png",
+      "label": "data/synthetic/labels/synth_0096.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0115.png",
+      "label": "data/synthetic/labels/synth_0115.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0093.png",
+      "label": "data/synthetic/labels/synth_0093.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0031.png",
+      "label": "data/synthetic/labels/synth_0031.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0094.png",
+      "label": "data/synthetic/labels/synth_0094.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0088.png",
+      "label": "data/synthetic/labels/synth_0088.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0097.png",
+      "label": "data/synthetic/labels/synth_0097.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0110.png",
+      "label": "data/synthetic/labels/synth_0110.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0048.png",
+      "label": "data/synthetic/labels/synth_0048.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0080.png",
+      "label": "data/synthetic/labels/synth_0080.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0089.png",
+      "label": "data/synthetic/labels/synth_0089.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0033.png",
+      "label": "data/synthetic/labels/synth_0033.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0017.png",
+      "label": "data/synthetic/labels/synth_0017.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0063.png",
+      "label": "data/synthetic/labels/synth_0063.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0083.png",
+      "label": "data/synthetic/labels/synth_0083.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0098.png",
+      "label": "data/synthetic/labels/synth_0098.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0052.png",
+      "label": "data/synthetic/labels/synth_0052.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0069.png",
+      "label": "data/synthetic/labels/synth_0069.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0009.png",
+      "label": "data/synthetic/labels/synth_0009.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0062.png",
+      "label": "data/synthetic/labels/synth_0062.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0099.png",
+      "label": "data/synthetic/labels/synth_0099.txt"
+    },
+    {
+      "image": "data/synthetic/images/synth_0109.png",
+      "label": "data/synthetic/labels/synth_0109.txt"
+    }
+  ]
+}

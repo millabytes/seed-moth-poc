@@ -12,6 +12,15 @@ from seed_moth_poc.detection.detector import (
 )
 
 
+def _display_path(path: Path) -> str:
+    """Return a repo-relative path when possible for stable JSON summaries."""
+    resolved = path.resolve()
+    try:
+        return str(resolved.relative_to(Path.cwd()))
+    except ValueError:
+        return str(resolved)
+
+
 def build_arg_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(
         description="Train a YOLO moth detector from synthetic images and labels.",
@@ -134,9 +143,9 @@ def main() -> None:
         "pretrained_weights": run.pretrained_weights,
         "train_images": dataset_layout.train_images,
         "val_images": dataset_layout.val_images,
-        "run_dir": str(run.run_dir),
-        "best_weights": str(run.best_weights),
-        "stable_best_weights": str(stable_best),
+        "run_dir": _display_path(run.run_dir),
+        "best_weights": _display_path(run.best_weights),
+        "stable_best_weights": _display_path(stable_best),
     }
     (models_root / "training.json").write_text(
         json.dumps(training_summary, indent=2) + "\n"

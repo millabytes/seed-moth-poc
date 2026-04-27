@@ -1,0 +1,12 @@
+{
+  "dataset_root": "results/detection/yolo_dataset",
+  "dataset_yaml": "results/detection/yolo_dataset/dataset.yaml",
+  "split_manifest": "results/detection/yolo_dataset/split.json",
+  "requested_weights": "assets/pretrained/yolo11n.pt",
+  "pretrained_weights": "assets/pretrained/yolo11n.pt",
+  "train_images": 96,
+  "val_images": 24,
+  "run_dir": "results/models/detection/train",
+  "best_weights": "/Users/milamarinkovic/PHD/seed-moth-poc/runs/detect/results/models/detection/train/weights/best.pt",
+  "stable_best_weights": "results/models/detection/best.pt"
+}
