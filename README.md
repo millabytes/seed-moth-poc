@@ -22,21 +22,13 @@ From the project root, sync the environment:
 uv sync
 ```
 
-## Formatting & pre-commit
+This repository keeps the default runtime environment free of third-party
+packages, so `uv sync` is only creating the local `.venv`.
 
-Install the git hook:
+## Development Tools
 
-```bash
-uv run pre-commit install
-```
-
-Run formatting and linting manually:
-
-```bash
-uv run black .
-uv run ruff check src tests
-uv run pre-commit run --all-files
-```
+Formatting, linting, and test tooling can be added later if needed. They are not
+required to run the data-preparation scripts in this proof of concept.
 
 ## Notes
 
@@ -46,3 +38,8 @@ uv run pre-commit run --all-files
 - The implementation is intended as a proof of concept, not a production-ready system.
 - Third-party public data should be tracked through manifests before being downloaded or
   committed.
+
+## Data Preparation
+
+The data-preparation documentation lives in
+[src/seed_moth_poc/data_prep/README.md](src/seed_moth_poc/data_prep/README.md).

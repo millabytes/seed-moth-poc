@@ -3,17 +3,7 @@ name = "seed-moth-poc"
 version = "0.1.0"
 description = "Seed moth proof-of-concept project"
 requires-python = ">=3.10"
-dependencies = [
-    "pandas",
-]
-
-[dependency-groups]
-dev = [
-    "black>=26.3.1",
-    "pre-commit>=4.5.1",
-    "pytest>=9.0.2",
-    "ruff>=0.15.9",
-]
+dependencies = []
 
 [tool.black]
 line-length = 88

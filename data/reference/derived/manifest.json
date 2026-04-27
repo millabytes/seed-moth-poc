@@ -1,0 +1,552 @@
+[
+  {
+    "source": "data/reference/target/images/1.png",
+    "label_path": "data/reference/target/labels/1.txt",
+    "mask": "data/reference/derived/masks/images/1.png",
+    "cutout": "data/reference/derived/cutouts/images/1.png",
+    "bbox": [
+      10,
+      20,
+      237,
+      298
+    ],
+    "analysis_bbox": [
+      0,
+      0,
+      227,
+      278
+    ],
+    "crop_box": [
+      10,
+      20,
+      238,
+      299
+    ],
+    "threshold": 28,
+    "foreground_pixels": 52442,
+    "image_width": 242,
+    "image_height": 310
+  },
+  {
+    "source": "data/reference/target/images/10.png",
+    "label_path": "data/reference/target/labels/10.txt",
+    "mask": "data/reference/derived/masks/images/10.png",
+    "cutout": "data/reference/derived/cutouts/images/10.png",
+    "bbox": [
+      0,
+      3,
+      1063,
+      802
+    ],
+    "analysis_bbox": [
+      0,
+      3,
+      1063,
+      802
+    ],
+    "crop_box": [
+      0,
+      0,
+      1068,
+      806
+    ],
+    "threshold": 20,
+    "foreground_pixels": 817165,
+    "image_width": 1068,
+    "image_height": 806
+  },
+  {
+    "source": "data/reference/target/images/11.png",
+    "label_path": "data/reference/target/labels/11.txt",
+    "mask": "data/reference/derived/masks/images/11.png",
+    "cutout": "data/reference/derived/cutouts/images/11.png",
+    "bbox": [
+      56,
+      91,
+      1299,
+      830
+    ],
+    "analysis_bbox": [
+      0,
+      0,
+      1243,
+      739
+    ],
+    "crop_box": [
+      56,
+      91,
+      1314,
+      980
+    ],
+    "threshold": 28,
+    "foreground_pixels": 569586,
+    "image_width": 1336,
+    "image_height": 1004
+  },
+  {
+    "source": "data/reference/target/images/12.png",
+    "label_path": "data/reference/target/labels/12.txt",
+    "mask": "data/reference/derived/masks/images/12.png",
+    "cutout": "data/reference/derived/cutouts/images/12.png",
+    "bbox": [
+      105,
+      53,
+      231,
+      255
+    ],
+    "analysis_bbox": [
+      32,
+      10,
+      158,
+      212
+    ],
+    "crop_box": [
+      73,
+      43,
+      270,
+      356
+    ],
+    "threshold": 248,
+    "foreground_pixels": 11500,
+    "image_width": 284,
+    "image_height": 400
+  },
+  {
+    "source": "data/reference/target/images/13.png",
+    "label_path": "data/reference/target/labels/13.txt",
+    "mask": "data/reference/derived/masks/images/13.png",
+    "cutout": "data/reference/derived/cutouts/images/13.png",
+    "bbox": [
+      0,
+      4,
+      602,
+      386
+    ],
+    "analysis_bbox": [
+      0,
+      4,
+      602,
+      386
+    ],
+    "crop_box": [
+      0,
+      0,
+      608,
+      388
+    ],
+    "threshold": 20,
+    "foreground_pixels": 208544,
+    "image_width": 608,
+    "image_height": 388
+  },
+  {
+    "source": "data/reference/target/images/14.png",
+    "label_path": "data/reference/target/labels/14.txt",
+    "mask": "data/reference/derived/masks/images/14.png",
+    "cutout": "data/reference/derived/cutouts/images/14.png",
+    "bbox": [
+      0,
+      0,
+      270,
+      177
+    ],
+    "analysis_bbox": [
+      0,
+      0,
+      270,
+      177
+    ],
+    "crop_box": [
+      0,
+      0,
+      288,
+      178
+    ],
+    "threshold": 65,
+    "foreground_pixels": 30015,
+    "image_width": 288,
+    "image_height": 178
+  },
+  {
+    "source": "data/reference/target/images/15.png",
+    "label_path": "data/reference/target/labels/15.txt",
+    "mask": "data/reference/derived/masks/images/15.png",
+    "cutout": "data/reference/derived/cutouts/images/15.png",
+    "bbox": [
+      0,
+      0,
+      339,
+      513
+    ],
+    "analysis_bbox": [
+      0,
+      0,
+      339,
+      513
+    ],
+    "crop_box": [
+      0,
+      0,
+      340,
+      514
+    ],
+    "threshold": 28,
+    "foreground_pixels": 168058,
+    "image_width": 340,
+    "image_height": 514
+  },
+  {
+    "source": "data/reference/target/images/16.png",
+    "label_path": "data/reference/target/labels/16.txt",
+    "mask": "data/reference/derived/masks/images/16.png",
+    "cutout": "data/reference/derived/cutouts/images/16.png",
+    "bbox": [
+      10,
+      60,
+      294,
+      270
+    ],
+    "analysis_bbox": [
+      8,
+      0,
+      292,
+      210
+    ],
+    "crop_box": [
+      2,
+      60,
+      295,
+      271
+    ],
+    "threshold": 28,
+    "foreground_pixels": 31802,
+    "image_width": 350,
+    "image_height": 356
+  },
+  {
+    "source": "data/reference/target/images/17.png",
+    "label_path": "data/reference/target/labels/17.txt",
+    "mask": "data/reference/derived/masks/images/17.png",
+    "cutout": "data/reference/derived/cutouts/images/17.png",
+    "bbox": [
+      82,
+      53,
+      247,
+      176
+    ],
+    "analysis_bbox": [
+      0,
+      13,
+      165,
+      136
+    ],
+    "crop_box": [
+      82,
+      40,
+      248,
+      177
+    ],
+    "threshold": 134,
+    "foreground_pixels": 10772,
+    "image_width": 330,
+    "image_height": 240
+  },
+  {
+    "source": "data/reference/target/images/18.jpg",
+    "label_path": "data/reference/target/labels/18.txt",
+    "mask": "data/reference/derived/masks/images/18.png",
+    "cutout": "data/reference/derived/cutouts/images/18.png",
+    "bbox": [
+      175,
+      324,
+      1311,
+      819
+    ],
+    "analysis_bbox": [
+      175,
+      194,
+      1311,
+      689
+    ],
+    "crop_box": [
+      0,
+      130,
+      1485,
+      990
+    ],
+    "threshold": 20,
+    "foreground_pixels": 371217,
+    "image_width": 1600,
+    "image_height": 1200
+  },
+  {
+    "source": "data/reference/target/images/2.png",
+    "label_path": "data/reference/target/labels/2.txt",
+    "mask": "data/reference/derived/masks/images/2.png",
+    "cutout": "data/reference/derived/cutouts/images/2.png",
+    "bbox": [
+      120,
+      99,
+      499,
+      368
+    ],
+    "analysis_bbox": [
+      0,
+      12,
+      379,
+      281
+    ],
+    "crop_box": [
+      120,
+      87,
+      547,
+      369
+    ],
+    "threshold": 92,
+    "foreground_pixels": 34906,
+    "image_width": 628,
+    "image_height": 416
+  },
+  {
+    "source": "data/reference/target/images/3.png",
+    "label_path": "data/reference/target/labels/3.txt",
+    "mask": "data/reference/derived/masks/images/3.png",
+    "cutout": "data/reference/derived/cutouts/images/3.png",
+    "bbox": [
+      45,
+      69,
+      896,
+      592
+    ],
+    "analysis_bbox": [
+      45,
+      69,
+      896,
+      592
+    ],
+    "crop_box": [
+      0,
+      0,
+      924,
+      602
+    ],
+    "threshold": 20,
+    "foreground_pixels": 206607,
+    "image_width": 924,
+    "image_height": 602
+  },
+  {
+    "source": "data/reference/target/images/4.png",
+    "label_path": "data/reference/target/labels/4.txt",
+    "mask": "data/reference/derived/masks/images/4.png",
+    "cutout": "data/reference/derived/cutouts/images/4.png",
+    "bbox": [
+      0,
+      31,
+      544,
+      678
+    ],
+    "analysis_bbox": [
+      0,
+      0,
+      544,
+      647
+    ],
+    "crop_box": [
+      0,
+      31,
+      548,
+      682
+    ],
+    "threshold": 20,
+    "foreground_pixels": 352637,
+    "image_width": 548,
+    "image_height": 682
+  },
+  {
+    "source": "data/reference/target/images/5.png",
+    "label_path": "data/reference/target/labels/5.txt",
+    "mask": "data/reference/derived/masks/images/5.png",
+    "cutout": "data/reference/derived/cutouts/images/5.png",
+    "bbox": [
+      89,
+      107,
+      546,
+      558
+    ],
+    "analysis_bbox": [
+      68,
+      107,
+      525,
+      558
+    ],
+    "crop_box": [
+      21,
+      0,
+      629,
+      604
+    ],
+    "threshold": 246,
+    "foreground_pixels": 80974,
+    "image_width": 664,
+    "image_height": 682
+  },
+  {
+    "source": "data/reference/target/images/6.png",
+    "label_path": "data/reference/target/labels/6.txt",
+    "mask": "data/reference/derived/masks/images/6.png",
+    "cutout": "data/reference/derived/cutouts/images/6.png",
+    "bbox": [
+      30,
+      61,
+      380,
+      305
+    ],
+    "analysis_bbox": [
+      0,
+      0,
+      350,
+      244
+    ],
+    "crop_box": [
+      30,
+      61,
+      396,
+      306
+    ],
+    "threshold": 28,
+    "foreground_pixels": 53110,
+    "image_width": 406,
+    "image_height": 362
+  },
+  {
+    "source": "data/reference/target/images/7.png",
+    "label_path": "data/reference/target/labels/7.txt",
+    "mask": "data/reference/derived/masks/images/7.png",
+    "cutout": "data/reference/derived/cutouts/images/7.png",
+    "bbox": [
+      12,
+      25,
+      708,
+      417
+    ],
+    "analysis_bbox": [
+      12,
+      25,
+      708,
+      417
+    ],
+    "crop_box": [
+      0,
+      0,
+      730,
+      438
+    ],
+    "threshold": 20,
+    "foreground_pixels": 149475,
+    "image_width": 730,
+    "image_height": 438
+  },
+  {
+    "source": "data/reference/target/images/8.png",
+    "label_path": "data/reference/target/labels/8.txt",
+    "mask": "data/reference/derived/masks/images/8.png",
+    "cutout": "data/reference/derived/cutouts/images/8.png",
+    "bbox": [
+      17,
+      25,
+      715,
+      395
+    ],
+    "analysis_bbox": [
+      17,
+      25,
+      715,
+      395
+    ],
+    "crop_box": [
+      0,
+      0,
+      746,
+      416
+    ],
+    "threshold": 20,
+    "foreground_pixels": 148277,
+    "image_width": 746,
+    "image_height": 416
+  },
+  {
+    "source": "data/reference/target/images/9.png",
+    "label_path": "data/reference/target/labels/9.txt",
+    "mask": "data/reference/derived/masks/images/9.png",
+    "cutout": "data/reference/derived/cutouts/images/9.png",
+    "bbox": [
+      39,
+      33,
+      746,
+      439
+    ],
+    "analysis_bbox": [
+      39,
+      33,
+      746,
+      439
+    ],
+    "crop_box": [
+      0,
+      0,
+      756,
+      456
+    ],
+    "threshold": 20,
+    "foreground_pixels": 163792,
+    "image_width": 756,
+    "image_height": 456
+  },
+  {
+    "source": "data/reference/target/morphology/resting_posture.png",
+    "label_path": "data/reference/target/labels/resting_posture.txt",
+    "mask": "data/reference/derived/masks/morphology/resting_posture.png",
+    "cutout": "data/reference/derived/cutouts/morphology/resting_posture.png",
+    "bbox": [
+      67,
+      45,
+      496,
+      712
+    ],
+    "analysis_bbox": [
+      67,
+      45,
+      496,
+      712
+    ],
+    "crop_box": null,
+    "threshold": 20,
+    "foreground_pixels": 181121,
+    "image_width": 498,
+    "image_height": 720
+  },
+  {
+    "source": "data/reference/target/morphology/size.png",
+    "label_path": "data/reference/target/labels/size.txt",
+    "mask": "data/reference/derived/masks/morphology/size.png",
+    "cutout": "data/reference/derived/cutouts/morphology/size.png",
+    "bbox": [
+      26,
+      38,
+      213,
+      167
+    ],
+    "analysis_bbox": [
+      26,
+      38,
+      213,
+      167
+    ],
+    "crop_box": null,
+    "threshold": 20,
+    "foreground_pixels": 12814,
+    "image_width": 252,
+    "image_height": 200
+  }
+]

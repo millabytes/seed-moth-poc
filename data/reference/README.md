@@ -6,6 +6,11 @@ These images are used only for species familiarisation and for designing morphol
 
 They are not used as a validated training dataset.
 
+Derived files created during preparation:
+- `target/labels/` stores YOLO bounding-box annotations from the annotator
+- `derived/masks/` stores binary masks extracted from the reference and morphology images
+- `derived/cutouts/` stores transparent cutouts built from those masks
+
 References of target images:
 - 7,8,9 [link](https://idtools.org/pdfs/Stenoma_catenifer.pdf)
 - 1,2 [link](https://www.inaturalist.ca/taxa/330324-Stenoma-catenifer)
