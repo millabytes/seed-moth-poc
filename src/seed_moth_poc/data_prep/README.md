@@ -12,7 +12,7 @@ Open the reference images one by one in a browser and write YOLO bbox labels to
 `data/reference/target/labels/`.
 
 ```bash
-uv run src/seed_moth_poc/data_prep/annotator.py \
+uv run seed-moth-annotate \
   --images data/reference/target/images \
   --labels data/reference/target/labels
 ```
@@ -42,7 +42,7 @@ crop hint, then writes tight bbox-cropped masks and cutouts for downstream
 synthetic generation.
 
 ```bash
-uv run python src/seed_moth_poc/data_prep/mask_extractor.py \
+uv run seed-moth-extract \
   --inputs data/reference/target/images data/reference/target/morphology \
   --output-root data/reference/derived \
   --labels-root data/reference/target/labels
@@ -59,7 +59,7 @@ Create trap-like backgrounds with gradients, noise, stains, and lighting
 variation.
 
 ```bash
-uv run python src/seed_moth_poc/data_prep/background_generator.py \
+uv run seed-moth-backgrounds \
   --output-dir data/backgrounds/generated \
   --count 24
 ```

@@ -31,6 +31,8 @@ DEFAULT_HOST = "127.0.0.1"
 DEFAULT_PORT = 0
 SUPPORTED_SUFFIXES = {".png", ".jpg", ".jpeg"}
 MIN_BOX_SIZE = 2.0
+DEFAULT_IMAGES = [Path("data/reference/target/images")]
+DEFAULT_LABELS = Path("data/reference/target/labels")
 
 
 @dataclass(slots=True)
@@ -115,12 +117,12 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--images",
         nargs="+",
-        required=True,
+        default=DEFAULT_IMAGES,
         help="One or more image files or directories to annotate.",
     )
     parser.add_argument(
         "--labels",
-        required=True,
+        default=DEFAULT_LABELS,
         help="Directory where YOLO label files should be written.",
     )
     parser.add_argument(
