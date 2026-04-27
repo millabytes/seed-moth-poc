@@ -4,6 +4,44 @@ set -euo pipefail
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$ROOT_DIR"
 
+usage() {
+  cat <<'EOF'
+seed-moth-poc pipeline runner
+
+Usage:
+  ./run.sh
+  ./run.sh --help
+
+Environment overrides:
+  SKIP_SYNC=1             Skip the initial uv sync step.
+  FORCE=1                 Rerun steps even when outputs already exist.
+  DEVICE=auto|cpu|mps|0   Training/inference device. Default: auto.
+  EPOCHS=40               YOLO training epochs. Default: 40.
+  BATCH_SIZE=8            YOLO training batch size. Default: 8.
+  PATIENCE=15             Early-stopping patience. Default: 15.
+  IMG_SIZE=640            Train/eval image size. Default: 640.
+  VAL_RATIO=0.2           Synthetic validation split ratio. Default: 0.2.
+  BACKGROUND_COUNT=24     Number of generated backgrounds. Default: 24.
+  SYNTHETIC_COUNT=120     Number of synthetic images. Default: 120.
+  SEED=42                 Random seed for generation and training. Default: 42.
+  PREDICT_CONF=0.25       Inference confidence threshold. Default: 0.25.
+  PREDICT_IOU=0.7         Inference NMS IoU threshold. Default: 0.7.
+  EVAL_IOU_THRESHOLD=0.5  IoU threshold for evaluation matching. Default: 0.5.
+
+Examples:
+  DEVICE=mps ./run.sh
+  EPOCHS=60 BATCH_SIZE=16 PATIENCE=20 ./run.sh
+  FORCE=1 ./run.sh
+EOF
+}
+
+case "${1:-}" in
+  -h|--help)
+    usage
+    exit 0
+    ;;
+esac
+
 export UV_CACHE_DIR="${UV_CACHE_DIR:-/tmp/uv-cache}"
 
 SKIP_SYNC="${SKIP_SYNC:-0}"
