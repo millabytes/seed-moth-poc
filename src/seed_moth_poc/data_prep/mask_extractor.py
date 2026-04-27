@@ -1,4 +1,4 @@
-"""Extract approximate masks and cutouts from reference and morphology images."""
+"""Extract approximate masks and cutouts from images."""
 
 import argparse
 import json
@@ -443,7 +443,6 @@ def build_arg_parser() -> argparse.ArgumentParser:
         type=Path,
         default=[
             Path("data/reference/target/images"),
-            Path("data/reference/target/morphology"),
         ],
         help="Input image directories.",
     )
@@ -469,7 +468,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
         "--labels-root",
         type=Path,
         default=Path("data/reference/target/labels"),
-        help="Directory containing YOLO label files used as optional crop hints.",
+        help="Directory containing YOLO label files used as crop guidance.",
     )
     return parser
 

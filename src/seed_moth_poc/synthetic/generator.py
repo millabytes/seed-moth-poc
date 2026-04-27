@@ -1,4 +1,4 @@
-"""Generate synthetic trap images with article-informed moth priors."""
+"""Generate synthetic trap images from extracted moth cutouts and backgrounds."""
 
 import argparse
 import json
@@ -20,7 +20,6 @@ from seed_moth_poc.data_prep.commons import (
 )
 from seed_moth_poc.data_prep.mask_extractor import cutout_from_mask, extract_foreground
 from seed_moth_poc.synthetic.image_ops import (
-    add_c_shape_spots,
     adjust_brightness,
     adjust_contrast,
     blend_toward_color,
@@ -35,10 +34,8 @@ from seed_moth_poc.synthetic.priors import (
     DEFAULT_MAX_OBJECTS,
     DEFAULT_MIN_OBJECTS,
     SHADOW_COLOR,
-    article_cue_probability,
     sample_object_count,
     sample_pixel_length,
-    sample_source_weight,
     sample_tint_color,
 )
 
@@ -48,8 +45,6 @@ class SourceRecord:
     """Metadata for one available moth cutout source."""
 
     path: Path
-    kind: str
-    weight: float
 
 
 @dataclass(slots=True)
@@ -57,7 +52,6 @@ class SynthObject:
     """Description of one object pasted into a synthetic image."""
 
     source_path: Path
-    kind: str
     bbox: Box
     angle_deg: float
     long_edge_px: float
@@ -88,7 +82,7 @@ def parse_args() -> argparse.Namespace:
         dest="sources_root",
         type=Path,
         default=Path("data/reference/derived/cutouts/images"),
-        help="Directory containing bbox-derived moth cutouts.",
+        help="Directory containing extracted moth cutouts.",
     )
     parser.add_argument(
         "--output-root",
@@ -135,37 +129,15 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def detect_kind(path: Path) -> str:
-    """Classify one cutout as a reference image source."""
-    return "reference"
-
-
 def collect_sources(sources_root: Path) -> list[SourceRecord]:
     """Collect available moth cutouts from the extracted reference directory."""
     paths = collect_image_files([sources_root], recursive=True)
-    records: list[SourceRecord] = []
-    for path in paths:
-        kind = detect_kind(path)
-        records.append(
-            SourceRecord(
-                path=path,
-                kind=kind,
-                weight=sample_source_weight(kind),
-            )
-        )
-    return records
+    return [SourceRecord(path=path) for path in paths]
 
 
 def collect_backgrounds(backgrounds_root: Path) -> list[Path]:
     """Collect procedural backgrounds from the generated backgrounds directory."""
     return collect_image_files([backgrounds_root], recursive=True)
-
-
-def weighted_choice(rng: random.Random, items: list[Any], weights: list[float]) -> Any:
-    """Choose one item from a weighted list."""
-    if not items:
-        raise ValueError("Cannot choose from an empty list.")
-    return rng.choices(items, weights=weights, k=1)[0]
 
 
 def object_overlap_ratio(candidate: Box, existing: list[Box]) -> float:
@@ -205,7 +177,7 @@ def position_object(
     last_x = 0
     last_y = 0
     last_box = Box(0.0, 0.0, float(sprite.width - 1), float(sprite.height - 1))
-    for _ in range(12):
+    for _ in range(16):
         x = rng.randint(-margin_x, max_x + margin_x)
         y = rng.randint(-margin_y, max_y + margin_y)
         candidate = Box(
@@ -216,22 +188,17 @@ def position_object(
         ).clamp(background.width, background.height)
         overlap = object_overlap_ratio(candidate, placed_boxes)
         last_x, last_y, last_box = x, y, candidate
-        if overlap <= 0.35 or rng.random() < 0.25:
+        if overlap <= 0.55 or rng.random() < 0.35:
             return x, y, candidate
     return last_x, last_y, last_box
 
 
-def apply_article_treatment(
+def apply_base_treatment(
     rng: random.Random,
     sprite: ImageBuffer,
-    kind: str,
 ) -> ImageBuffer:
-    """Warm the reference cutout and optionally reinforce the article cue."""
-    tinted = blend_toward_color(sprite, sample_tint_color(rng), rng.uniform(0.06, 0.16))
-    if rng.random() < article_cue_probability(kind):
-        spot_density = 0.55
-        tinted = add_c_shape_spots(tinted, density=spot_density)
-    return tinted
+    """Warm the reference cutout with a mild tan tint."""
+    return blend_toward_color(sprite, sample_tint_color(rng), 0.12)
 
 
 def transform_sprite(
@@ -252,7 +219,7 @@ def transform_sprite(
 
     long_edge_px = sample_pixel_length(rng, background.width, background.height)
     long_edge_px *= rng.uniform(0.90, 1.10)
-    sprite = apply_article_treatment(rng, sprite, source.kind)
+    sprite = apply_base_treatment(rng, sprite)
 
     source_aspect = sprite.width / max(1, sprite.height)
     if source_aspect >= 1.0:
@@ -325,7 +292,7 @@ def build_scene(
     transform_config: TransformConfig,
 ) -> tuple[ImageBuffer, list[SynthObject], Path]:
     """Compose one synthetic scene from one background and one or more moths."""
-    background_path = weighted_choice(rng, backgrounds, [1.0] * len(backgrounds))
+    background_path = rng.choice(backgrounds)
     canvas = load_image(background_path)
 
     object_count = sample_object_count(
@@ -340,9 +307,8 @@ def build_scene(
     if object_count <= 0:
         return canvas, objects, background_path
 
-    source_weights = [record.weight for record in sources]
     for index in range(object_count):
-        source = weighted_choice(rng, sources, source_weights)
+        source = rng.choice(sources)
         sprite, angle_deg, long_edge_px = transform_sprite(rng, source, canvas)
         if index > 0:
             reduction = rng.uniform(0.55, 0.82)
@@ -371,7 +337,6 @@ def build_scene(
         objects.append(
             SynthObject(
                 source_path=source.path,
-                kind=source.kind,
                 bbox=bbox,
                 angle_deg=angle_deg,
                 long_edge_px=long_edge_px,
@@ -422,7 +387,6 @@ def synthesize(
             "objects": [
                 {
                     "source": str(obj.source_path),
-                    "kind": obj.kind,
                     "bbox": [
                         obj.bbox.x1,
                         obj.bbox.y1,

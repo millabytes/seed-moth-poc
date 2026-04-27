@@ -1,9 +1,8 @@
-"""Article-informed priors for synthetic Stenoma catenifer samples.
+"""Lightweight priors for synthetic Stenoma catenifer samples.
 
 The values below are derived from the [IDTools screening aid article](https://idtools.org/pdfs/Stenoma_catenifer.pdf):
 - forewing length: 8.0-15.0 mm
-- forewings: yellowish-tan with numerous black spots
-- distal wing spots: rough C-shaped outline
+- forewings: yellowish-tan
 - adults: similar coloration between sexes, with females slightly larger
 """
 
@@ -11,19 +10,9 @@ import random
 
 FOREWING_LENGTH_MM_RANGE: tuple[float, float] = (8.0, 15.0)
 
-# The source cutouts from morphology and reference imagery are mixed together,
-# but morphology sources get slightly higher weight because they reinforce the
-# posture/shape prior from the PDF.
-REFERENCE_SOURCE_WEIGHT = 1.0
-MORPHOLOGY_SOURCE_WEIGHT = 1.35
-
 DEFAULT_EMPTY_PROBABILITY = 0.0
-DEFAULT_MIN_OBJECTS = 1
-DEFAULT_MAX_OBJECTS = 3
-
-# Article cues are strongest on morphology cutouts, lighter on reference cutouts.
-REFERENCE_ARTICLE_CUE_PROBABILITY = 0.35
-MORPHOLOGY_ARTICLE_CUE_PROBABILITY = 0.9
+DEFAULT_MIN_OBJECTS = 2
+DEFAULT_MAX_OBJECTS = 10
 
 # Warm, tan-like tones that keep the synthetic moths in the right visual range.
 TAN_TINTS: tuple[tuple[int, int, int], ...] = (
@@ -61,7 +50,7 @@ def sample_object_count(
 
 
 def _object_count_weights(min_objects: int, max_objects: int) -> list[float]:
-    """Return a simple count distribution biased toward one or two moths."""
+    """Return a count distribution biased toward low-to-medium crowding."""
     counts = list(range(min_objects, max_objects + 1))
     if not counts:
         return []
@@ -71,33 +60,33 @@ def _object_count_weights(min_objects: int, max_objects: int) -> list[float]:
         if count <= 0:
             weights.append(0.8)
         elif count == 1:
-            weights.append(3.8)
+            weights.append(0.4)
         elif count == 2:
-            weights.append(2.6)
+            weights.append(2.4)
         elif count == 3:
-            weights.append(1.4)
+            weights.append(2.8)
+        elif count == 4:
+            weights.append(2.6)
+        elif count == 5:
+            weights.append(2.2)
+        elif count == 6:
+            weights.append(1.9)
+        elif count == 7:
+            weights.append(1.5)
+        elif count == 8:
+            weights.append(1.2)
+        elif count == 9:
+            weights.append(1.0)
+        elif count == 10:
+            weights.append(0.8)
         else:
-            weights.append(max(0.4, 1.1 - 0.1 * (count - 3)))
+            weights.append(max(0.3, 0.8 - 0.05 * (count - 10)))
     return weights
 
 
 def sample_forewing_length_mm(rng: random.Random) -> float:
     """Sample a forewing length in millimeters from the PDF prior."""
     return rng.uniform(*FOREWING_LENGTH_MM_RANGE)
-
-
-def sample_source_weight(kind: str) -> float:
-    """Return a sampling weight for a cutout source kind."""
-    if kind == "morphology":
-        return MORPHOLOGY_SOURCE_WEIGHT
-    return REFERENCE_SOURCE_WEIGHT
-
-
-def article_cue_probability(kind: str) -> float:
-    """Return how often to add article-specific cues to a cutout."""
-    if kind == "morphology":
-        return MORPHOLOGY_ARTICLE_CUE_PROBABILITY
-    return REFERENCE_ARTICLE_CUE_PROBABILITY
 
 
 def sample_pixel_length(

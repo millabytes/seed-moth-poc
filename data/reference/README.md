@@ -7,7 +7,7 @@ These images are used only for species familiarisation and for designing morphol
 They are not used as a validated training dataset.
 
 Derived files created during preparation:
-- `target/labels/` stores YOLO bounding-box annotations from the annotator
+- `target/labels/` stores YOLO bounding-box annotations from the manuall annotation
 - `derived/masks/` stores binary masks extracted from the reference and morphology images
 - `derived/cutouts/` stores transparent cutouts built from those masks
 

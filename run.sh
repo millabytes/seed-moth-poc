@@ -65,7 +65,6 @@ EVAL_IOU_THRESHOLD="${EVAL_IOU_THRESHOLD:-0.5}"
 
 TARGET_IMAGES_DIR="data/reference/target/images"
 TARGET_LABELS_DIR="data/reference/target/labels"
-MORPHOLOGY_DIR="data/reference/target/morphology"
 DERIVED_ROOT="data/reference/derived"
 BACKGROUND_ROOT="data/backgrounds/generated"
 SYNTHETIC_ROOT="data/synthetic"
@@ -112,51 +111,48 @@ has_files() {
   [[ -d "$dir" ]] && find "$dir" -type f -print -quit >/dev/null
 }
 
+has_image_files() {
+  local dir="$1"
+  [[ -d "$dir" ]] || return 1
+  [[ -n "$(find "$dir" -type f \( -iname '*.png' -o -iname '*.jpg' -o -iname '*.jpeg' \) -print -quit)" ]]
+}
+
 annotation_complete() {
   local image_count label_count
   image_count="$(count_images "$TARGET_IMAGES_DIR")"
   label_count="$(count_txt_files "$TARGET_LABELS_DIR")"
-  [[ "$image_count" -gt 0 && "$label_count" -ge "$image_count" ]]
+  [[ "$image_count" -gt 0 && "$label_count" -eq "$image_count" ]]
 }
 
 mask_extraction_complete() {
-  local cutout_count mask_count
+  local image_count cutout_count mask_count
+  image_count="$(count_images "$TARGET_IMAGES_DIR")"
   cutout_count="$(count_images "$DERIVED_ROOT/cutouts/images")"
   mask_count="$(count_images "$DERIVED_ROOT/masks/images")"
-  [[ -f "$DERIVED_ROOT/manifest.json" && "$cutout_count" -gt 0 && "$cutout_count" -eq "$mask_count" ]]
+  annotation_complete || return 1
+  [[
+    -f "$DERIVED_ROOT/manifest.json" &&
+    "$image_count" -gt 0 &&
+    "$cutout_count" -eq "$image_count" &&
+    "$mask_count" -eq "$image_count"
+  ]]
 }
 
 backgrounds_complete() {
   local background_count
   background_count="$(count_images "$BACKGROUND_ROOT")"
-  [[ -f "$BACKGROUND_ROOT/manifest.json" && "$background_count" -gt 0 ]]
+  [[ -f "$BACKGROUND_ROOT/manifest.json" && "$background_count" -eq "$BACKGROUND_COUNT" ]]
 }
 
 synthetic_complete() {
   local image_count label_count
   image_count="$(count_images "$SYNTHETIC_ROOT/images")"
   label_count="$(count_txt_files "$SYNTHETIC_ROOT/labels")"
-  [[ -f "$SYNTHETIC_ROOT/manifest.json" && "$image_count" -gt 0 && "$image_count" -eq "$label_count" ]]
-}
-
-dataset_complete() {
-  [[ -f "$DATASET_ROOT/dataset.yaml" && -f "$DATASET_ROOT/split.json" ]]
-}
-
-training_complete() {
-  [[ -f "$MODELS_ROOT/best.pt" && -f "$MODELS_ROOT/training.json" ]]
-}
-
-evaluation_val_complete() {
-  [[ -f "$EVAL_VAL_ROOT/metrics.json" && -f "$EVAL_VAL_ROOT/per_image.json" ]]
-}
-
-prediction_complete() {
-  [[ -f "$PREDICTIONS_ROOT/predictions.json" && -f "$PREDICTIONS_ROOT/counts.json" ]]
-}
-
-real_evaluation_complete() {
-  [[ -f "$EVAL_TEST_ROOT/metrics.json" && -f "$EVAL_TEST_ROOT/per_image.json" ]]
+  [[
+    -f "$SYNTHETIC_ROOT/manifest.json" &&
+    "$image_count" -eq "$SYNTHETIC_COUNT" &&
+    "$label_count" -eq "$SYNTHETIC_COUNT"
+  ]]
 }
 
 auto_detect_device() {
@@ -215,8 +211,6 @@ require_dir() {
 }
 
 require_dir "$TARGET_IMAGES_DIR"
-require_dir "$MORPHOLOGY_DIR"
-require_dir "$TEST_IMAGES_DIR"
 
 if [[ "$SKIP_SYNC" != "1" ]]; then
   run_step "Sync uv environment" uv sync --all-extras --locked
@@ -228,7 +222,7 @@ RESOLVED_DEVICE="$(resolve_device)"
 log "info" "Training/inference device resolved to: $RESOLVED_DEVICE"
 log "info" "Config: epochs=$EPOCHS batch=$BATCH_SIZE patience=$PATIENCE img_size=$IMG_SIZE val_ratio=$VAL_RATIO background_count=$BACKGROUND_COUNT synthetic_count=$SYNTHETIC_COUNT seed=$SEED conf=$PREDICT_CONF iou=$PREDICT_IOU eval_iou=$EVAL_IOU_THRESHOLD"
 
-if [[ "$FORCE" != "1" && annotation_complete ]]; then
+if [[ "$FORCE" != "1" ]] && annotation_complete; then
   skip_step "Manual annotation is already complete"
 else
   run_step "Manual annotation" \
@@ -237,17 +231,17 @@ else
       --labels "$TARGET_LABELS_DIR"
 fi
 
-if [[ "$FORCE" != "1" && mask_extraction_complete ]]; then
+if [[ "$FORCE" != "1" ]] && mask_extraction_complete; then
   skip_step "Mask/cutout extraction is already complete"
 else
   run_step "Extract masks and cutouts" \
     uv run seed-moth-extract \
-      --inputs "$TARGET_IMAGES_DIR" "$MORPHOLOGY_DIR" \
+      --inputs "$TARGET_IMAGES_DIR" \
       --output-root "$DERIVED_ROOT" \
       --labels-root "$TARGET_LABELS_DIR"
 fi
 
-if [[ "$FORCE" != "1" && backgrounds_complete ]]; then
+if [[ "$FORCE" != "1" ]] && backgrounds_complete; then
   skip_step "Background generation is already complete"
 else
   run_step "Generate trap-like backgrounds" \
@@ -257,7 +251,7 @@ else
       --seed "$SEED"
 fi
 
-if [[ "$FORCE" != "1" && synthetic_complete ]]; then
+if [[ "$FORCE" != "1" ]] && synthetic_complete; then
   skip_step "Synthetic data generation is already complete"
 else
   run_step "Generate synthetic dataset" \
@@ -275,37 +269,29 @@ else
   log "warn" "Local pretrained checkpoint not found at $PRETRAINED_WEIGHTS; Ultralytics will fall back to yolo11n.pt resolution."
 fi
 
-if [[ "$FORCE" != "1" && dataset_complete && training_complete ]]; then
-  skip_step "Detection training is already complete"
-else
-  run_step "Train YOLO detector" \
-    uv run seed-moth-train \
-      --synthetic-root "$SYNTHETIC_ROOT" \
-      --dataset-root "$DATASET_ROOT" \
-      --output-dir "$MODELS_ROOT" \
-      --weights "$PRETRAINED_WEIGHTS" \
-      --epochs "$EPOCHS" \
-      --patience "$PATIENCE" \
-      --batch "$BATCH_SIZE" \
-      --imgsz "$IMG_SIZE" \
-      --val-ratio "$VAL_RATIO" \
-      --seed "$SEED" \
-      --device "$RESOLVED_DEVICE"
-fi
+run_step "Train YOLO detector" \
+  uv run seed-moth-train \
+    --synthetic-root "$SYNTHETIC_ROOT" \
+    --dataset-root "$DATASET_ROOT" \
+    --output-dir "$MODELS_ROOT" \
+    --weights "$PRETRAINED_WEIGHTS" \
+    --epochs "$EPOCHS" \
+    --patience "$PATIENCE" \
+    --batch "$BATCH_SIZE" \
+    --imgsz "$IMG_SIZE" \
+    --val-ratio "$VAL_RATIO" \
+    --seed "$SEED" \
+    --device "$RESOLVED_DEVICE"
 
-if [[ "$FORCE" != "1" && evaluation_val_complete ]]; then
-  skip_step "Synthetic validation evaluation is already complete"
-else
-  run_step "Evaluate on synthetic validation split" \
-    uv run seed-moth-evaluate \
-      --model "$MODELS_ROOT/best.pt" \
-      --iou-threshold "$EVAL_IOU_THRESHOLD" \
-      --imgsz "$IMG_SIZE" \
-      --device "$RESOLVED_DEVICE"
-fi
+run_step "Evaluate on synthetic validation split" \
+  uv run seed-moth-evaluate \
+    --model "$MODELS_ROOT/best.pt" \
+    --iou-threshold "$EVAL_IOU_THRESHOLD" \
+    --imgsz "$IMG_SIZE" \
+    --device "$RESOLVED_DEVICE"
 
-if [[ "$FORCE" != "1" && prediction_complete ]]; then
-  skip_step "Inference on test images is already complete"
+if ! has_image_files "$TEST_IMAGES_DIR"; then
+  skip_step "Inference on test images (no input images found in $TEST_IMAGES_DIR)"
 else
   run_step "Predict and count on unlabeled test images" \
     uv run seed-moth-predict \
@@ -318,22 +304,18 @@ else
       --device "$RESOLVED_DEVICE"
 fi
 
-if [[ -d "$TEST_LABELS_ROOT" && "$(count_txt_files "$TEST_LABELS_ROOT")" -gt 0 ]]; then
-  if [[ "$FORCE" != "1" && real_evaluation_complete ]]; then
-    skip_step "Real-image evaluation is already complete"
-  else
-    run_step "Evaluate on labeled real test images" \
-      uv run seed-moth-evaluate \
-        --model "$MODELS_ROOT/best.pt" \
-        --inputs "$TEST_IMAGES_DIR" \
-        --labels-root "$TEST_LABELS_ROOT" \
-        --output-dir "$EVAL_TEST_ROOT" \
-        --iou-threshold "$EVAL_IOU_THRESHOLD" \
-        --imgsz "$IMG_SIZE" \
-        --device "$RESOLVED_DEVICE"
-  fi
+if has_image_files "$TEST_IMAGES_DIR" && [[ -d "$TEST_LABELS_ROOT" && "$(count_txt_files "$TEST_LABELS_ROOT")" -gt 0 ]]; then
+  run_step "Evaluate on labeled real test images" \
+    uv run seed-moth-evaluate \
+      --model "$MODELS_ROOT/best.pt" \
+      --inputs "$TEST_IMAGES_DIR" \
+      --labels-root "$TEST_LABELS_ROOT" \
+      --output-dir "$EVAL_TEST_ROOT" \
+      --iou-threshold "$EVAL_IOU_THRESHOLD" \
+      --imgsz "$IMG_SIZE" \
+      --device "$RESOLVED_DEVICE"
 else
-  skip_step "Real-image evaluation (no labels found in $TEST_LABELS_ROOT)"
+  skip_step "Real-image evaluation (missing test images or labels in $TEST_LABELS_ROOT)"
 fi
 
 log "done" "Pipeline complete"

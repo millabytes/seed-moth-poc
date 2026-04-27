@@ -50,9 +50,9 @@ To run the whole pipeline step by step, use the root shell script:
 The script:
 
 - syncs the environment with `uv sync --all-extras --locked`
-- skips data-prep and model steps if they are already complete
-- trains the YOLO detector, evaluates on the synthetic validation split, and runs inference on `data/test_images`
-- if `results/test_images/labels/` exists, also runs the labeled real-image evaluation
+- skips manual annotation, mask/cutout extraction, background generation, and synthetic generation when their outputs are already complete
+- always reruns YOLO training, synthetic validation evaluation, and inference when the required inputs exist
+- if `data/test_images` and `results/test_images/labels/` exist, also runs the labeled real-image evaluation
 
 Useful overrides:
 

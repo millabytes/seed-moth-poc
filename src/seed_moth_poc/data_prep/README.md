@@ -36,14 +36,13 @@ Shortcuts:
 
 ## Extract masks and cutouts
 
-Build binary masks and transparent cutouts from the reference and morphology
-images. If a label file exists for a reference image, the extractor uses it as a
-crop hint, then writes tight bbox-cropped masks and cutouts for downstream
-synthetic generation.
+Build binary masks and transparent cutouts from the original reference images.
+The extractor uses the YOLO labels as crop guidance by default so the cutout is
+centered on the annotated moth.
 
 ```bash
 uv run seed-moth-extract \
-  --inputs data/reference/target/images data/reference/target/morphology \
+  --inputs data/reference/target/images \
   --output-root data/reference/derived \
   --labels-root data/reference/target/labels
 ```

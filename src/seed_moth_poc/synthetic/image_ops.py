@@ -26,7 +26,6 @@ class SourceImage:
     """One synthetic source cutout loaded from disk."""
 
     path: Path
-    kind: str
     image: ImageBuffer
 
 
@@ -181,9 +180,9 @@ def crop_to_alpha(
     return crop_image(image, left, top, right, bottom, fill=(0, 0, 0, 0))
 
 
-def load_source_image(path: Path, kind: str) -> SourceImage:
+def load_source_image(path: Path) -> SourceImage:
     """Load a source cutout from disk."""
-    return SourceImage(path=path, kind=kind, image=load_image(path))
+    return SourceImage(path=path, image=load_image(path))
 
 
 def _sample_premultiplied(image: ImageBuffer, x: float, y: float) -> tuple[int, int, int, int]:
@@ -375,50 +374,6 @@ def blend_toward_color(
     return result
 
 
-def add_c_shape_spots(
-    image: ImageBuffer,
-    *,
-    spot_color: tuple[int, int, int] = (37, 30, 22),
-    density: float = 1.0,
-) -> ImageBuffer:
-    """Overlay a C-shaped trail of dark spots inspired by the article description."""
-    bounds = alpha_bbox(image)
-    if bounds is None:
-        return image.copy()
-
-    result = image.copy()
-    left = int(bounds.x1)
-    top = int(bounds.y1)
-    right = int(bounds.x2)
-    bottom = int(bounds.y2)
-    width = max(1, right - left + 1)
-    height = max(1, bottom - top + 1)
-    count = max(4, int(round((width / 50.0 + height / 40.0) * density)))
-
-    arc_cx = left + int(round(width * 0.73))
-    arc_cy = top + int(round(height * 0.48))
-    arc_rx = max(2, int(round(width * 0.22)))
-    arc_ry = max(2, int(round(height * 0.34)))
-    for index in range(count):
-        t = 0.15 + (index / max(1, count - 1)) * 0.75
-        angle = math.radians(215.0 + 120.0 * t)
-        x = int(round(arc_cx + arc_rx * math.cos(angle)))
-        y = int(round(arc_cy + arc_ry * math.sin(angle)))
-        radius = max(1, int(round(min(width, height) * (0.018 + 0.01 * density))))
-        alpha = min(160, 90 + int(round(40 * density)))
-        draw_filled_circle(result, x, y, radius, (spot_color[0], spot_color[1], spot_color[2], alpha))
-
-    scatter_count = max(2, int(round(4 * density)))
-    for _ in range(scatter_count):
-        x = int(round(left + 0.12 * width + (0.76 * width) * (_ / max(1, scatter_count - 1))))
-        x += int(round((math.sin(_ + width) * 0.07) * width))
-        y = int(round(top + rng_like_noise(width, height, _) * height))
-        radius = max(1, int(round(min(width, height) * 0.012)))
-        draw_filled_circle(result, x, y, radius, (spot_color[0], spot_color[1], spot_color[2], 120))
-
-    return result
-
-
 def add_scattered_spots(
     image: ImageBuffer,
     mask: bytearray,
@@ -474,7 +429,7 @@ def render_procedural_moth(
     base_tint: tuple[int, int, int],
     rng: random.Random,
 ) -> ImageBuffer:
-    """Render a clean moth sprite from a morphology mask/template."""
+    """Render a clean moth sprite from a binary template."""
     mask = foreground_mask_from_image(template)
     bounds = mask_bbox(mask, template.width, template.height)
     if bounds is None:
@@ -541,16 +496,7 @@ def render_procedural_moth(
         rng=rng,
     )
 
-    if rng.random() < 0.9:
-        result = add_c_shape_spots(result, spot_color=(30, 24, 18), density=rng.uniform(0.45, 0.80))
-
     return crop_image(result, left, top, right + 1, bottom + 1, fill=(0, 0, 0, 0))
-
-
-def rng_like_noise(width: int, height: int, index: int) -> float:
-    """Return a deterministic small noise term for spot placement."""
-    seed = (width * 1315423911) ^ (height * 2654435761) ^ (index * 97531)
-    return ((seed & 0xFFFF) / 0xFFFF) * 0.2 - 0.1
 
 
 def paste_rgba(
@@ -628,5 +574,5 @@ def draw_shadow(
             )
 
 
-def load_and_crop_source(path: Path, kind: str) -> SourceImage:
-    return SourceImage(path=path, kind=kind, image=crop_to_alpha(load_image(path)))
+def load_and_crop_source(path: Path) -> SourceImage:
+    return SourceImage(path=path, image=crop_to_alpha(load_image(path)))

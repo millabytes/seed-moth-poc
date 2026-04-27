@@ -10,7 +10,6 @@ The generator uses the `Stenoma catenifer` screening aid PDF as a prior for:
 
 - forewing length of `8.0-15.0 mm`
 - yellowish-tan wings with numerous black spots
-- a rough C-shaped dark-spot pattern near the distal wing end
 
 The visual source comes from:
 
