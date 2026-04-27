@@ -3,6 +3,9 @@
 This package trains a YOLO detector on the synthetic dataset and then counts moths by counting the predicted bounding boxes.
 
 The synthetic `labels/` files are the training supervision for YOLO. 
+The pretrained starting checkpoint lives in
+[assets/pretrained/README.md](../../assets/pretrained/README.md) and is
+expected at `assets/pretrained/yolo11n.pt`. If that local file exists, the trainer uses it directly. Otherwise it falls back to the Ultralytics checkpoint name `yolo11n.pt`.
 
 ## Train on synthetic data
 

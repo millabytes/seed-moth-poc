@@ -191,6 +191,8 @@ cython_debug/
 # Ruff stuff:
 .ruff_cache/
 results/
+assets/pretrained/*.pt
+assets/pretrained/*.pth
 
 # PyPI configuration file
 .pypirc

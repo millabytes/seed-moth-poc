@@ -36,14 +36,18 @@ def build_arg_parser() -> argparse.ArgumentParser:
     )
     parser.add_argument(
         "--weights",
-        type=str,
-        default="yolo11n.pt",
-        help="Pretrained YOLO weights to fine-tune.",
+        type=Path,
+        default=Path("assets/pretrained/yolo11n.pt"),
+        help=(
+            "Pretrained YOLO weights to fine-tune. "
+            "If the local asset exists it is used directly; otherwise the script "
+            "falls back to Ultralytics' yolo11n.pt checkpoint name."
+        ),
     )
     parser.add_argument(
         "--epochs",
         type=int,
-        default=100,
+        default=40,
         help="Number of training epochs.",
     )
     parser.add_argument(
@@ -61,7 +65,7 @@ def build_arg_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--patience",
         type=int,
-        default=30,
+        default=15,
         help="Early-stopping patience.",
     )
     parser.add_argument(
@@ -126,6 +130,8 @@ def main() -> None:
         "dataset_root": str(dataset_layout.dataset_root),
         "dataset_yaml": str(dataset_layout.dataset_yaml),
         "split_manifest": str(dataset_layout.split_manifest),
+        "requested_weights": str(args.weights),
+        "pretrained_weights": run.pretrained_weights,
         "train_images": dataset_layout.train_images,
         "val_images": dataset_layout.val_images,
         "run_dir": str(run.run_dir),

@@ -3,8 +3,7 @@
 Initial proof of concept for detecting and counting avocado seed moths
 (`Stenoma catenifer`) in pheromone-trap images.
 
-This repository contains the implementation scaffold, reproducible Python environment,
-and technical documentation for the interview assignment.
+This repository contains the implementation scaffold, reproducible Python environment, and technical documentation for the interview assignment.
 
 
 ## Setup
@@ -22,8 +21,7 @@ From the project root, sync the environment:
 uv sync
 ```
 
-This repository keeps the default runtime environment free of third-party
-packages, so `uv sync` only creates the local `.venv`.
+This repository keeps the default runtime environment free of third-party packages, so `uv sync` only creates the local `.venv`.
 
 To install the full repo, including the YOLO detection stack, use:
 
@@ -41,19 +39,61 @@ After that, the main console scripts are available through `uv run`:
 - `uv run seed-moth-predict`
 - `uv run seed-moth-evaluate`
 
-Generated data-preparation and synthetic artifacts stay under `data/`, while
-YOLO training artifacts, predictions, and evaluation metrics go under
-`results/`.
+## Full Pipeline
+
+To run the whole pipeline step by step, use the root shell script:
+
+```bash
+./run.sh
+```
+
+The script:
+
+- syncs the environment with `uv sync --all-extras --locked`
+- skips data-prep and model steps if they are already complete
+- trains the YOLO detector, evaluates on the synthetic validation split, and runs inference on `data/test_images`
+- if `results/test_images/labels/` exists, also runs the labeled real-image evaluation
+
+Useful overrides:
+
+- `SKIP_SYNC=1 ./run.sh` skips the initial `uv sync`
+- `FORCE=1 ./run.sh` reruns every step even if outputs already exist
+- `DEVICE=mps ./run.sh` forces Apple Silicon GPU training/inference
+- `DEVICE=0 ./run.sh` forces the first CUDA GPU if you are on NVIDIA hardware
+- `EPOCHS=60 BATCH_SIZE=16 PATIENCE=20 ./run.sh` changes the YOLO training plan
+- `BACKGROUND_COUNT=40 SYNTHETIC_COUNT=200 ./run.sh` changes data-generation volume
+
+## Structure 
+
+Generated data-preparation and synthetic artifacts stay under `data/`, while YOLO training artifacts, predictions, and evaluation metrics go under `results/`.
 
 Practical split:
 
 - `data/` = raw inputs, annotations, cutouts, backgrounds, synthetic images
 - `results/` = YOLO datasets, trained weights, inference previews, metrics
+- `assets/pretrained/` = optional local pretrained checkpoints such as
+  `yolo11n.pt`
 
-## Development Tools
+### Data Preparation
 
-Formatting, linting, and test tooling can be added later if needed. They are not
-required to run the data-preparation scripts in this proof of concept.
+The data-preparation documentation lives in
+[src/seed_moth_poc/data_prep/README.md](src/seed_moth_poc/data_prep/README.md).
+
+### Data Generation
+
+Synthetic data generation lives in
+[src/seed_moth_poc/synthetic/README.md](src/seed_moth_poc/synthetic/README.md).
+
+### Detection
+
+Detection and counting live in
+[src/seed_moth_poc/detection/README.md](src/seed_moth_poc/detection/README.md).
+
+### Evaluation
+
+Evaluation lives in
+[src/seed_moth_poc/evaluation/README.md](src/seed_moth_poc/evaluation/README.md).
+
 
 ## Notes
 
@@ -61,19 +101,4 @@ required to run the data-preparation scripts in this proof of concept.
 - `uv.lock` is committed for reproducible installs
 - `pyproject.toml` is the project metadata and build config
 - The implementation is intended as a proof of concept, not a production-ready system.
-- Third-party public data should be tracked through manifests before being downloaded or
-  committed.
-
-## Data Preparation
-
-The data-preparation documentation lives in
-[src/seed_moth_poc/data_prep/README.md](src/seed_moth_poc/data_prep/README.md).
-
-Synthetic data generation lives in
-[src/seed_moth_poc/synthetic/README.md](src/seed_moth_poc/synthetic/README.md).
-
-Detection and counting live in
-[src/seed_moth_poc/detection/README.md](src/seed_moth_poc/detection/README.md).
-
-Evaluation lives in
-[src/seed_moth_poc/evaluation/README.md](src/seed_moth_poc/evaluation/README.md).
+- Third-party public data should be tracked through manifests before being downloaded or committed.

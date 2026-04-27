@@ -18,7 +18,8 @@ from seed_moth_poc.data_prep.commons import (
 )
 
 DEFAULT_CLASS_NAME = "moth"
-DEFAULT_MODEL_WEIGHTS = "yolo11n.pt"
+DEFAULT_MODEL_WEIGHTS = Path("assets/pretrained/yolo11n.pt")
+DEFAULT_PRETRAINED_MODEL_NAME = "yolo11n.pt"
 DEFAULT_VAL_RATIO = 0.2
 DEFAULT_CONFIDENCE = 0.25
 DEFAULT_IOU = 0.7
@@ -44,6 +45,7 @@ class TrainingRun:
     best_weights: Path
     final_weights: Path | None
     dataset_yaml: Path
+    pretrained_weights: str
 
 
 @dataclass(slots=True)
@@ -199,6 +201,22 @@ def prepare_yolo_dataset(
     )
 
 
+def resolve_pretrained_weights(weights: str | Path) -> str:
+    """Resolve a pretrained checkpoint path or name for YOLO initialization."""
+    candidate = Path(weights)
+    if candidate.exists():
+        return candidate.as_posix()
+    if candidate == DEFAULT_MODEL_WEIGHTS:
+        return DEFAULT_PRETRAINED_MODEL_NAME
+    if candidate.suffix == ".pt" and candidate.parent != Path("."):
+        raise FileNotFoundError(
+            f"Pretrained weights not found at {candidate}. "
+            f"Place the file there, or pass {DEFAULT_PRETRAINED_MODEL_NAME} "
+            "to let Ultralytics resolve the checkpoint from its cache or download it."
+        )
+    return str(weights)
+
+
 def resolve_best_weights(model: YOLO, project_dir: Path, run_name: str) -> Path:
     """Resolve the best weights path produced by a YOLO training run."""
     trainer = getattr(model, "trainer", None)
@@ -221,7 +239,7 @@ def train_yolo_detector(
     dataset_yaml: Path,
     output_dir: Path,
     *,
-    weights: str = DEFAULT_MODEL_WEIGHTS,
+    weights: str | Path = DEFAULT_MODEL_WEIGHTS,
     run_name: str = "train",
     epochs: int = 100,
     imgsz: int = DEFAULT_IMAGE_SIZE,
@@ -232,7 +250,8 @@ def train_yolo_detector(
     exist_ok: bool = True,
 ) -> TrainingRun:
     """Train a YOLO detector and return the produced weights."""
-    model = YOLO(weights)
+    resolved_weights = resolve_pretrained_weights(weights)
+    model = YOLO(resolved_weights)
     train_kwargs: dict[str, object] = {
         "data": str(dataset_yaml),
         "epochs": epochs,
@@ -261,6 +280,7 @@ def train_yolo_detector(
         best_weights=best_weights,
         final_weights=final_weights,
         dataset_yaml=dataset_yaml,
+        pretrained_weights=resolved_weights,
     )
 
 
