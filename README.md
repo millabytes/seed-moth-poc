@@ -43,3 +43,6 @@ required to run the data-preparation scripts in this proof of concept.
 
 The data-preparation documentation lives in
 [src/seed_moth_poc/data_prep/README.md](src/seed_moth_poc/data_prep/README.md).
+
+Synthetic data generation lives in
+[src/seed_moth_poc/synthetic/README.md](src/seed_moth_poc/synthetic/README.md).
