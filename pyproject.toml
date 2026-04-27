@@ -18,6 +18,7 @@ detection = [
 
 [project.scripts]
 seed-moth-annotate = "seed_moth_poc.data_prep.annotator:main"
+seed-moth-cutout-review = "seed_moth_poc.data_prep.manual_cutout:main"
 seed-moth-extract = "seed_moth_poc.data_prep.mask_extractor:main"
 seed-moth-backgrounds = "seed_moth_poc.data_prep.background_generator:main"
 seed-moth-synthetic = "seed_moth_poc.synthetic.generator:main"

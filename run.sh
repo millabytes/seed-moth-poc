@@ -47,7 +47,7 @@ export UV_CACHE_DIR="${UV_CACHE_DIR:-/tmp/uv-cache}"
 SKIP_SYNC="${SKIP_SYNC:-0}"
 FORCE="${FORCE:-0}"
 STEP_INDEX=0
-STEP_TOTAL=9
+STEP_TOTAL=10
 
 # Tunable defaults
 DEVICE="${DEVICE:-auto}"
@@ -66,6 +66,7 @@ EVAL_IOU_THRESHOLD="${EVAL_IOU_THRESHOLD:-0.5}"
 TARGET_IMAGES_DIR="data/reference/target/images"
 TARGET_LABELS_DIR="data/reference/target/labels"
 DERIVED_ROOT="data/reference/derived"
+REVIEWED_ROOT="data/reference/reviewed"
 BACKGROUND_ROOT="data/backgrounds/generated"
 SYNTHETIC_ROOT="data/synthetic"
 TEST_IMAGES_DIR="data/test_images"
@@ -142,6 +143,17 @@ backgrounds_complete() {
   local background_count
   background_count="$(count_images "$BACKGROUND_ROOT")"
   [[ -f "$BACKGROUND_ROOT/manifest.json" && "$background_count" -eq "$BACKGROUND_COUNT" ]]
+}
+
+reviewed_cutouts_complete() {
+  local cutout_count mask_count
+  cutout_count="$(count_images "$REVIEWED_ROOT/cutouts/images")"
+  mask_count="$(count_images "$REVIEWED_ROOT/masks/images")"
+  [[
+    -f "$REVIEWED_ROOT/manifest.json" &&
+    "$cutout_count" -gt 0 &&
+    "$mask_count" -gt 0
+  ]]
 }
 
 synthetic_complete() {
@@ -241,6 +253,15 @@ else
       --labels-root "$TARGET_LABELS_DIR"
 fi
 
+if [[ "$FORCE" != "1" ]] && reviewed_cutouts_complete; then
+  skip_step "Manual cutout review overrides already exist"
+else
+  run_step "Review cutouts manually" \
+    uv run seed-moth-cutout-review \
+      --inputs "$DERIVED_ROOT/cutouts/images" \
+      --output-root "$REVIEWED_ROOT"
+fi
+
 if [[ "$FORCE" != "1" ]] && backgrounds_complete; then
   skip_step "Background generation is already complete"
 else
@@ -257,7 +278,7 @@ else
   run_step "Generate synthetic dataset" \
     uv run seed-moth-synthetic \
       --backgrounds "$BACKGROUND_ROOT" \
-      --sources-root "$DERIVED_ROOT/cutouts/images" \
+      --sources-root "$REVIEWED_ROOT/cutouts/images" "$DERIVED_ROOT/cutouts/images" \
       --output-root "$SYNTHETIC_ROOT" \
       --count "$SYNTHETIC_COUNT" \
       --seed "$SEED"

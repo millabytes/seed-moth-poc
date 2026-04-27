@@ -45,6 +45,7 @@ class SourceRecord:
     """Metadata for one available moth cutout source."""
 
     path: Path
+    relative_path: str
 
 
 @dataclass(slots=True)
@@ -52,6 +53,7 @@ class SynthObject:
     """Description of one object pasted into a synthetic image."""
 
     source_path: Path
+    source_key: str
     bbox: Box
     angle_deg: float
     long_edge_px: float
@@ -80,9 +82,16 @@ def parse_args() -> argparse.Namespace:
         "--sources-root",
         "--cutout-root",
         dest="sources_root",
+        nargs="+",
         type=Path,
-        default=Path("data/reference/derived/cutouts/images"),
-        help="Directory containing extracted moth cutouts.",
+        default=[
+            Path("data/reference/reviewed/cutouts/images"),
+            Path("data/reference/derived/cutouts/images"),
+        ],
+        help=(
+            "One or more directories containing extracted moth cutouts. "
+            "Reviewed cutouts are preferred when the same relative file exists in multiple roots."
+        ),
     )
     parser.add_argument(
         "--output-root",
@@ -129,10 +138,28 @@ def parse_args() -> argparse.Namespace:
     return parser.parse_args()
 
 
-def collect_sources(sources_root: Path) -> list[SourceRecord]:
-    """Collect available moth cutouts from the extracted reference directory."""
-    paths = collect_image_files([sources_root], recursive=True)
-    return [SourceRecord(path=path) for path in paths]
+def collect_sources(source_roots: list[Path]) -> list[SourceRecord]:
+    """Collect available moth cutouts from one or more source directories.
+
+    When the same relative file exists in multiple roots, the first root wins.
+    This lets manual review outputs override the automatic cutouts.
+    """
+    sources: list[SourceRecord] = []
+    seen_keys: set[str] = set()
+
+    for root in source_roots:
+        paths = collect_image_files([root], recursive=True)
+        for path in paths:
+            try:
+                relative_key = path.relative_to(root).as_posix()
+            except ValueError:
+                relative_key = path.name
+            if relative_key in seen_keys:
+                continue
+            seen_keys.add(relative_key)
+            sources.append(SourceRecord(path=path, relative_path=relative_key))
+
+    return sources
 
 
 def collect_backgrounds(backgrounds_root: Path) -> list[Path]:
@@ -337,6 +364,7 @@ def build_scene(
         objects.append(
             SynthObject(
                 source_path=source.path,
+                source_key=source.relative_path,
                 bbox=bbox,
                 angle_deg=angle_deg,
                 long_edge_px=long_edge_px,
@@ -387,6 +415,7 @@ def synthesize(
             "objects": [
                 {
                     "source": str(obj.source_path),
+                    "source_key": obj.source_key,
                     "bbox": [
                         obj.bbox.x1,
                         obj.bbox.y1,

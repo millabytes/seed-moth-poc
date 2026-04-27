@@ -52,6 +52,33 @@ Outputs:
 - `data/reference/derived/cutouts/`
 - `data/reference/derived/manifest.json`
 
+## Review cutouts manually
+
+If a few automatic cutouts are still poor, review them before synthetic
+generation. The reviewer opens the extracted cutouts one by one, lets you draw
+a polygon around the moth, and writes corrected cutouts and masks to a separate
+reviewed output tree.
+
+```bash
+uv run seed-moth-cutout-review \
+  --inputs data/reference/derived/cutouts/images \
+  --output-root data/reference/reviewed
+```
+
+Useful controls:
+- `Replace` mode uses only the manual polygon and is the default
+- `Add` mode merges your polygon with the existing alpha mask
+- `Save` writes the reviewed cutout and mask
+- `Next` / `Enter` saves and advances to the next cutout
+
+You can pass a whole directory or a few individual cutout PNGs to `--inputs`.
+By default the reviewer skips cutouts that already have a reviewed override.
+
+
+The synthetic generator prefers reviewed cutouts first and falls back to the
+automatic cutouts for files that were not reviewed. The reviewed tree is meant
+to be a sparse override set, not a full duplicate of the automatic cutouts.
+
 ## Generate procedural backgrounds
 
 Create trap-like backgrounds with gradients, noise, stains, and lighting

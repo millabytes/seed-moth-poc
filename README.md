@@ -32,6 +32,7 @@ uv sync --all-extras
 After that, the main console scripts are available through `uv run`:
 
 - `uv run seed-moth-annotate`
+- `uv run seed-moth-cutout-review`
 - `uv run seed-moth-extract`
 - `uv run seed-moth-backgrounds`
 - `uv run seed-moth-synthetic`
@@ -50,7 +51,7 @@ To run the whole pipeline step by step, use the root shell script:
 The script:
 
 - syncs the environment with `uv sync --all-extras --locked`
-- skips manual annotation, mask/cutout extraction, background generation, and synthetic generation when their outputs are already complete
+- skips manual annotation, mask/cutout extraction and maual review, background generation, and synthetic generation when their outputs are already complete
 - always reruns YOLO training, synthetic validation evaluation, and inference when the required inputs exist
 - if `data/test_images` and `results/test_images/labels/` exist, also runs the labeled real-image evaluation
 
@@ -70,6 +71,7 @@ Generated data-preparation and synthetic artifacts stay under `data/`, while YOL
 Practical split:
 
 - `data/` = raw inputs, annotations, cutouts, backgrounds, synthetic images
+- `data/reference/reviewed/` = optional reviewed cutouts and masks for improved synthetic generation
 - `results/` = YOLO datasets, trained weights, inference previews, metrics
 - `assets/pretrained/` = optional local pretrained checkpoints such as
   `yolo11n.pt`

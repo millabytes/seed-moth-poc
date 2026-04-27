@@ -38,7 +38,7 @@ def sample_object_count(
     if max_objects < min_objects:
         raise ValueError("max_objects must be greater than or equal to min_objects.")
 
-    if min_objects <= 0 and rng.random() < empty_probability:
+    if empty_probability > 0.0 and rng.random() < empty_probability:
         return 0
 
     count = rng.choices(
