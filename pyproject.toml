@@ -23,7 +23,7 @@ seed-moth-backgrounds = "seed_moth_poc.data_prep.background_generator:main"
 seed-moth-synthetic = "seed_moth_poc.synthetic.generator:main"
 seed-moth-train = "seed_moth_poc.detection.train:main"
 seed-moth-predict = "seed_moth_poc.detection.predict:main"
-seed-moth-evaluate = "seed_moth_poc.detection.evaluate:main"
+seed-moth-evaluate = "seed_moth_poc.evaluation.evaluate:main"
 
 [tool.uv]
 package = true
