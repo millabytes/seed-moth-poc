@@ -3,13 +3,9 @@
 import argparse
 import json
 import random
-import sys
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Any
-
-if __package__ in {None, ""}:
-    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from seed_moth_poc.data_prep.commons import (
     Box,

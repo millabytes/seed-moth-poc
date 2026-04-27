@@ -9,7 +9,6 @@ import argparse
 import html
 import json
 import mimetypes
-import sys
 import threading
 import webbrowser
 from dataclasses import dataclass, field
@@ -18,9 +17,6 @@ from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 from typing import Any
 from urllib.parse import parse_qs, urlparse
-
-if __package__ in {None, ""}:
-    sys.path.insert(0, str(Path(__file__).resolve().parents[2]))
 
 from seed_moth_poc.data_prep.commons import (
     Box,

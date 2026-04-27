@@ -25,7 +25,7 @@ Run the data-preparation pipeline first, described
 ## Generate synthetic data
 
 ```bash
-uv run src/seed_moth_poc/synthetic/generator.py \
+uv run seed-moth-synthetic \
   --backgrounds data/backgrounds/generated \
   --sources-root data/reference/derived/cutouts/images \
   --output-root data/synthetic \

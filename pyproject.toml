@@ -1,9 +1,32 @@
+[build-system]
+requires = ["uv_build"]
+build-backend = "uv_build"
+
 [project]
 name = "seed-moth-poc"
 version = "0.1.0"
 description = "Seed moth proof-of-concept project"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.13"
 dependencies = []
+
+[project.optional-dependencies]
+detection = [
+    "torch",
+    "torchvision",
+    "ultralytics",
+]
+
+[project.scripts]
+seed-moth-annotate = "seed_moth_poc.data_prep.annotator:main"
+seed-moth-extract = "seed_moth_poc.data_prep.mask_extractor:main"
+seed-moth-backgrounds = "seed_moth_poc.data_prep.background_generator:main"
+seed-moth-synthetic = "seed_moth_poc.synthetic.generator:main"
+seed-moth-train = "seed_moth_poc.detection.train:main"
+seed-moth-predict = "seed_moth_poc.detection.predict:main"
+seed-moth-evaluate = "seed_moth_poc.detection.evaluate:main"
+
+[tool.uv]
+package = true
 
 [tool.black]
 line-length = 88
