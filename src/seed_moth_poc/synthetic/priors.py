@@ -17,8 +17,8 @@ FOREWING_LENGTH_MM_RANGE: tuple[float, float] = (8.0, 15.0)
 REFERENCE_SOURCE_WEIGHT = 1.0
 MORPHOLOGY_SOURCE_WEIGHT = 1.35
 
-DEFAULT_EMPTY_PROBABILITY = 0.15
-DEFAULT_MIN_OBJECTS = 0
+DEFAULT_EMPTY_PROBABILITY = 0.0
+DEFAULT_MIN_OBJECTS = 1
 DEFAULT_MAX_OBJECTS = 3
 
 # Article cues are strongest on morphology cutouts, lighter on reference cutouts.
@@ -27,14 +27,15 @@ MORPHOLOGY_ARTICLE_CUE_PROBABILITY = 0.9
 
 # Warm, tan-like tones that keep the synthetic moths in the right visual range.
 TAN_TINTS: tuple[tuple[int, int, int], ...] = (
-    (235, 211, 161),
-    (228, 200, 150),
-    (220, 191, 141),
-    (244, 226, 182),
+    (243, 224, 175),
+    (236, 213, 160),
+    (228, 201, 148),
+    (220, 190, 137),
+    (247, 231, 189),
 )
 
-SPOT_COLOR: tuple[int, int, int] = (37, 30, 22)
-SHADOW_COLOR: tuple[int, int, int] = (78, 60, 40)
+SPOT_COLOR: tuple[int, int, int] = (35, 28, 20)
+SHADOW_COLOR: tuple[int, int, int] = (72, 58, 40)
 
 
 def sample_object_count(
@@ -116,4 +117,3 @@ def sample_pixel_length(
 def sample_tint_color(rng: random.Random) -> tuple[int, int, int]:
     """Pick a warm tan tint for the moth body and wings."""
     return rng.choice(TAN_TINTS)
-

@@ -6,6 +6,7 @@ import math
 import statistics
 import sys
 from dataclasses import dataclass
+from collections import deque
 from pathlib import Path
 
 if __package__ in {None, ""}:
@@ -132,6 +133,36 @@ def build_scores(
 def threshold_scores(scores: bytearray, threshold: int) -> bytearray:
     """Convert foreground scores into a binary mask."""
     return bytearray(1 if score > threshold else 0 for score in scores)
+
+
+def flood_background(scores: bytearray, width: int, height: int, threshold: int) -> bytearray:
+    """Mark low-score pixels connected to the crop border as background."""
+    background = bytearray(width * height)
+    queue: deque[int] = deque()
+    for index in border_indices(width, height):
+        if scores[index] <= threshold:
+            queue.append(index)
+
+    neighbors = [(-1, 0), (1, 0), (0, -1), (0, 1)]
+    while queue:
+        current = queue.popleft()
+        if background[current]:
+            continue
+        background[current] = 1
+        y = current // width
+        x = current % width
+        for dx, dy in neighbors:
+            nx = x + dx
+            ny = y + dy
+            if nx < 0 or ny < 0 or nx >= width or ny >= height:
+                continue
+            neighbor = ny * width + nx
+            if background[neighbor]:
+                continue
+            if scores[neighbor] <= threshold:
+                queue.append(neighbor)
+
+    return background
 
 
 def connected_components(mask: bytearray, width: int, height: int) -> list[Component]:
@@ -295,13 +326,14 @@ def extract_foreground(image: ImageBuffer, threshold: int) -> tuple[bytearray, t
     scores, border_scores = build_scores(image, background)
     border_median = statistics.median(border_scores) if border_scores else 0
     border_mad = median_abs_deviation(border_scores)
-    estimated = max(threshold, int(border_median + 4 * border_mad + 8))
+    estimated = max(threshold, int(border_median + 3 * border_mad + 6))
     candidates = sorted(
         {
             max(12, threshold),
-            max(12, estimated - 8),
+            max(12, estimated - 12),
+            max(12, estimated - 6),
             estimated,
-            min(255, estimated + 8),
+            min(255, estimated + 6),
         }
     )
 
@@ -309,7 +341,8 @@ def extract_foreground(image: ImageBuffer, threshold: int) -> tuple[bytearray, t
     best_area = -1
 
     for candidate in candidates:
-        mask = threshold_scores(scores, candidate)
+        background_mask = flood_background(scores, image.width, image.height, candidate)
+        mask = bytearray(1 if value == 0 else 0 for value in background_mask)
         components = select_components(
             connected_components(mask, image.width, image.height),
             image_width=image.width,
@@ -324,7 +357,7 @@ def extract_foreground(image: ImageBuffer, threshold: int) -> tuple[bytearray, t
             best_result = (final_mask, (x1, y1, x2, y2), candidate)
             best_area = area
         ratio = area / (image.width * image.height)
-        if 0.0002 <= ratio <= 0.6:
+        if 0.0005 <= ratio <= 0.45:
             return final_mask, (x1, y1, x2, y2), candidate
 
     if best_result is not None:
@@ -499,6 +532,24 @@ def process_image(
     mask_image = mask_to_image(full_mask, image.width, image.height)
     cutout_image = cutout_from_mask(image, full_mask)
     full_bbox = bbox_from_mask(full_mask, image.width, image.height)
+    if full_bbox != (0, 0, 0, 0):
+        x1, y1, x2, y2 = full_bbox
+        mask_image = crop_image(
+            mask_image,
+            x1,
+            y1,
+            x2 + 1,
+            y2 + 1,
+            fill=(0, 0, 0, 255),
+        )
+        cutout_image = crop_image(
+            cutout_image,
+            x1,
+            y1,
+            x2 + 1,
+            y2 + 1,
+            fill=(0, 0, 0, 0),
+        )
 
     mask_path = masks_root / root_name / relative_output_path(
         input_root, image_path, ".png"

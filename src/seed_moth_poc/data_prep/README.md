@@ -38,7 +38,8 @@ Shortcuts:
 
 Build binary masks and transparent cutouts from the reference and morphology
 images. If a label file exists for a reference image, the extractor uses it as a
-crop hint.
+crop hint, then writes tight bbox-cropped masks and cutouts for downstream
+synthetic generation.
 
 ```bash
 uv run python src/seed_moth_poc/data_prep/mask_extractor.py \

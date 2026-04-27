@@ -15,12 +15,14 @@ from seed_moth_poc.data_prep.commons import (
     Box,
     ImageBuffer,
     collect_image_files,
+    crop_image,
     ensure_directory,
     fit_to_box,
     load_image,
     save_png,
     write_yolo_boxes,
 )
+from seed_moth_poc.data_prep.mask_extractor import cutout_from_mask, extract_foreground
 from seed_moth_poc.synthetic.image_ops import (
     add_c_shape_spots,
     adjust_brightness,
@@ -28,7 +30,6 @@ from seed_moth_poc.synthetic.image_ops import (
     blend_toward_color,
     crop_to_alpha,
     draw_shadow,
-    load_and_crop_source,
     paste_rgba,
     resize_rgba,
     rotate_rgba,
@@ -87,9 +88,11 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--sources-root",
+        "--cutout-root",
+        dest="sources_root",
         type=Path,
-        default=Path("data/reference/derived/cutouts"),
-        help="Directory containing extracted moth cutouts.",
+        default=Path("data/reference/derived/cutouts/images"),
+        help="Directory containing bbox-derived moth cutouts.",
     )
     parser.add_argument(
         "--output-root",
@@ -137,17 +140,12 @@ def parse_args() -> argparse.Namespace:
 
 
 def detect_kind(path: Path) -> str:
-    """Classify one source cutout as reference or morphology."""
-    parts = {part.lower() for part in path.parts}
-    if "morphology" in parts:
-        return "morphology"
-    if "images" in parts:
-        return "reference"
+    """Classify one cutout as a reference image source."""
     return "reference"
 
 
 def collect_sources(sources_root: Path) -> list[SourceRecord]:
-    """Collect available moth cutouts from the extracted source directory."""
+    """Collect available moth cutouts from the extracted reference directory."""
     paths = collect_image_files([sources_root], recursive=True)
     records: list[SourceRecord] = []
     for path in paths:
@@ -232,10 +230,10 @@ def apply_article_treatment(
     sprite: ImageBuffer,
     kind: str,
 ) -> ImageBuffer:
-    """Apply warm coloration and a C-shaped spot cue when appropriate."""
-    tinted = blend_toward_color(sprite, sample_tint_color(rng), rng.uniform(0.05, 0.14))
+    """Warm the reference cutout and optionally reinforce the article cue."""
+    tinted = blend_toward_color(sprite, sample_tint_color(rng), rng.uniform(0.06, 0.16))
     if rng.random() < article_cue_probability(kind):
-        spot_density = 1.15 if kind == "morphology" else 0.75
+        spot_density = 0.55
         tinted = add_c_shape_spots(tinted, density=spot_density)
     return tinted
 
@@ -245,16 +243,20 @@ def transform_sprite(
     source: SourceRecord,
     background: ImageBuffer,
 ) -> tuple[ImageBuffer, float, float]:
-    """Prepare one sprite for placement on a background."""
-    sprite = load_and_crop_source(source.path, source.kind).image
+    """Prepare one cutout sprite for placement on a background."""
+    source_image = load_image(source.path)
+    mask, bbox, _ = extract_foreground(source_image, threshold=48)
+    sprite = cutout_from_mask(source_image, mask)
+    if bbox != (0, 0, 0, 0):
+        x1, y1, x2, y2 = bbox
+        sprite = crop_image(sprite, x1, y1, x2 + 1, y2 + 1, fill=(0, 0, 0, 0))
+    sprite = crop_to_alpha(sprite)
     if sprite.width <= 0 or sprite.height <= 0:
         raise ValueError(f"Empty cutout source: {source.path}")
 
     long_edge_px = sample_pixel_length(rng, background.width, background.height)
-    if source.kind == "reference":
-        long_edge_px *= rng.uniform(0.92, 1.08)
-    else:
-        long_edge_px *= rng.uniform(0.95, 1.15)
+    long_edge_px *= rng.uniform(0.90, 1.10)
+    sprite = apply_article_treatment(rng, sprite, source.kind)
 
     source_aspect = sprite.width / max(1, sprite.height)
     if source_aspect >= 1.0:
@@ -278,8 +280,6 @@ def transform_sprite(
         sprite = adjust_contrast(sprite, rng.uniform(0.90, 1.08))
     if rng.random() < 0.35:
         sprite = adjust_brightness(sprite, rng.uniform(0.90, 1.10))
-
-    sprite = apply_article_treatment(rng, sprite, source.kind)
     if rng.random() < 0.12:
         # A small horizontal flip helps break symmetry across synthetic samples.
         sprite = flip_horizontal(sprite)

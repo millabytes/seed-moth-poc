@@ -1,6 +1,7 @@
 """Image transformation helpers used by the synthetic generator."""
 
 import math
+import random
 from dataclasses import dataclass
 from pathlib import Path
 
@@ -17,6 +18,7 @@ from seed_moth_poc.data_prep.commons import (
 )
 
 ALPHA_THRESHOLD = 8
+MASK_THRESHOLD = 24
 
 
 @dataclass(slots=True)
@@ -26,6 +28,117 @@ class SourceImage:
     path: Path
     kind: str
     image: ImageBuffer
+
+
+def _clamp_channel(value: float) -> int:
+    """Clamp a floating-point channel value to the 8-bit range."""
+    return max(0, min(255, int(round(value))))
+
+
+def foreground_mask_from_image(
+    image: ImageBuffer,
+    *,
+    threshold: int = MASK_THRESHOLD,
+    keep_largest_component: bool = True,
+) -> bytearray:
+    """Build a binary foreground mask from a mostly black/white template image."""
+    mask = bytearray(image.width * image.height)
+    for index in range(image.width * image.height):
+        base = index * 4
+        pixel = image.pixels[base : base + 4]
+        if pixel[3] < 250:
+            value = pixel[3]
+        else:
+            value = (pixel[0] * 299 + pixel[1] * 587 + pixel[2] * 114) // 1000
+        if value >= threshold:
+            mask[index] = 1
+
+    if keep_largest_component:
+        mask = keep_largest_foreground_component(mask, image.width, image.height)
+    return mask
+
+
+def keep_largest_foreground_component(
+    mask: bytearray,
+    width: int,
+    height: int,
+) -> bytearray:
+    """Keep only the largest 8-connected foreground component in a binary mask."""
+    visited = bytearray(width * height)
+    best_component: list[int] = []
+    neighbors = [
+        (-1, -1),
+        (0, -1),
+        (1, -1),
+        (-1, 0),
+        (1, 0),
+        (-1, 1),
+        (0, 1),
+        (1, 1),
+    ]
+
+    for index in range(width * height):
+        if mask[index] == 0 or visited[index]:
+            continue
+
+        stack = [index]
+        visited[index] = 1
+        component: list[int] = []
+
+        while stack:
+            current = stack.pop()
+            component.append(current)
+            cy = current // width
+            cx = current % width
+            for dx, dy in neighbors:
+                nx = cx + dx
+                ny = cy + dy
+                if nx < 0 or ny < 0 or nx >= width or ny >= height:
+                    continue
+                neighbor = ny * width + nx
+                if mask[neighbor] and not visited[neighbor]:
+                    visited[neighbor] = 1
+                    stack.append(neighbor)
+
+        if len(component) > len(best_component):
+            best_component = component
+
+    result = bytearray(width * height)
+    for index in best_component:
+        result[index] = 1
+    return result
+
+
+def mask_bbox(mask: bytearray, width: int, height: int) -> Box | None:
+    """Return the tight bounding box for a binary foreground mask."""
+    left = width
+    top = height
+    right = -1
+    bottom = -1
+    for index in range(width * height):
+        if mask[index] == 0:
+            continue
+        y = index // width
+        x = index % width
+        if x < left:
+            left = x
+        if y < top:
+            top = y
+        if x > right:
+            right = x
+        if y > bottom:
+            bottom = y
+    if right < left or bottom < top:
+        return None
+    return Box(float(left), float(top), float(right), float(bottom))
+
+
+def mask_coverage(mask: bytearray, width: int, height: int) -> float:
+    """Return the fraction of pixels marked as foreground in a binary mask."""
+    total = width * height
+    if total <= 0:
+        return 0.0
+    return sum(mask) / total
 
 
 def alpha_bbox(image: ImageBuffer, alpha_threshold: int = ALPHA_THRESHOLD) -> Box | None:
@@ -306,6 +419,134 @@ def add_c_shape_spots(
     return result
 
 
+def add_scattered_spots(
+    image: ImageBuffer,
+    mask: bytearray,
+    *,
+    spot_color: tuple[int, int, int] = (37, 30, 22),
+    density: float = 1.0,
+    rng: random.Random | None = None,
+) -> ImageBuffer:
+    """Overlay many small dark spots inside the visible foreground area."""
+    result = image.copy()
+    bounds = mask_bbox(mask, image.width, image.height)
+    if bounds is None:
+        return result
+
+    rng = rng or random.Random(0)
+    left = int(bounds.x1)
+    top = int(bounds.y1)
+    right = int(bounds.x2)
+    bottom = int(bounds.y2)
+    width = max(1, right - left + 1)
+    height = max(1, bottom - top + 1)
+    count = max(6, int(round((width + height) / 18.0 * density)))
+
+    for _ in range(count):
+        chosen_x = None
+        chosen_y = None
+        for _attempt in range(32):
+            x = rng.randint(left, right)
+            y = rng.randint(top, bottom)
+            if mask[y * image.width + x]:
+                chosen_x = x
+                chosen_y = y
+                break
+        if chosen_x is None or chosen_y is None:
+            continue
+
+        radius = max(1, int(round(min(width, height) * rng.uniform(0.012, 0.026))))
+        alpha = rng.randint(90, 170)
+        draw_filled_circle(
+            result,
+            chosen_x,
+            chosen_y,
+            radius,
+            (spot_color[0], spot_color[1], spot_color[2], alpha),
+        )
+
+    return result
+
+
+def render_procedural_moth(
+    template: ImageBuffer,
+    *,
+    base_tint: tuple[int, int, int],
+    rng: random.Random,
+) -> ImageBuffer:
+    """Render a clean moth sprite from a morphology mask/template."""
+    mask = foreground_mask_from_image(template)
+    bounds = mask_bbox(mask, template.width, template.height)
+    if bounds is None:
+        return ImageBuffer.blank(1, 1, (0, 0, 0, 0))
+
+    left = int(bounds.x1)
+    top = int(bounds.y1)
+    right = int(bounds.x2)
+    bottom = int(bounds.y2)
+    width = max(1, right - left + 1)
+    height = max(1, bottom - top + 1)
+
+    light_tint = (
+        _clamp_channel(base_tint[0] * rng.uniform(1.04, 1.12)),
+        _clamp_channel(base_tint[1] * rng.uniform(1.02, 1.08)),
+        _clamp_channel(base_tint[2] * rng.uniform(0.96, 1.03)),
+    )
+    mid_tint = (
+        _clamp_channel(base_tint[0] * rng.uniform(0.94, 1.00)),
+        _clamp_channel(base_tint[1] * rng.uniform(0.90, 0.98)),
+        _clamp_channel(base_tint[2] * rng.uniform(0.82, 0.92)),
+    )
+    dark_tint = (
+        _clamp_channel(base_tint[0] * rng.uniform(0.72, 0.84)),
+        _clamp_channel(base_tint[1] * rng.uniform(0.64, 0.78)),
+        _clamp_channel(base_tint[2] * rng.uniform(0.58, 0.72)),
+    )
+
+    result = ImageBuffer.blank(template.width, template.height, (0, 0, 0, 0))
+    for index in range(template.width * template.height):
+        if mask[index] == 0:
+            continue
+        y = index // template.width
+        x = index % template.width
+        x_norm = 0.0 if width == 1 else (x - left) / (width - 1)
+        y_norm = 0.0 if height == 1 else (y - top) / (height - 1)
+        center_bias = 1.0 - min(1.0, abs(x_norm - 0.5) * 2.0)
+        wing_bias = 1.0 - y_norm
+        shade = 0.62 + 0.26 * wing_bias + 0.12 * center_bias
+        if y_norm < 0.45:
+            blend = y_norm / 0.45 if 0.45 > 0 else 0.0
+            tone = (
+                _clamp_channel(dark_tint[0] * (1.0 - blend) + mid_tint[0] * blend),
+                _clamp_channel(dark_tint[1] * (1.0 - blend) + mid_tint[1] * blend),
+                _clamp_channel(dark_tint[2] * (1.0 - blend) + mid_tint[2] * blend),
+            )
+        else:
+            blend = (y_norm - 0.45) / 0.55 if 0.55 > 0 else 0.0
+            tone = (
+                _clamp_channel(mid_tint[0] * (1.0 - blend) + light_tint[0] * blend),
+                _clamp_channel(mid_tint[1] * (1.0 - blend) + light_tint[1] * blend),
+                _clamp_channel(mid_tint[2] * (1.0 - blend) + light_tint[2] * blend),
+            )
+        result.pixels[index * 4] = _clamp_channel(tone[0] * shade)
+        result.pixels[index * 4 + 1] = _clamp_channel(tone[1] * shade)
+        result.pixels[index * 4 + 2] = _clamp_channel(tone[2] * shade)
+        result.pixels[index * 4 + 3] = 255
+
+    result = add_scattered_spots(
+        result,
+        mask,
+        spot_color=(35, 28, 20),
+        density=rng.uniform(0.75, 1.10),
+        rng=rng,
+    )
+
+    if rng.random() < 0.9:
+        result = add_c_shape_spots(result, spot_color=(30, 24, 18), density=rng.uniform(0.45, 0.80))
+
+    return crop_image(result, left, top, right + 1, bottom + 1, fill=(0, 0, 0, 0))
+
+
 def rng_like_noise(width: int, height: int, index: int) -> float:
     """Return a deterministic small noise term for spot placement."""
     seed = (width * 1315423911) ^ (height * 2654435761) ^ (index * 97531)
@@ -389,4 +630,3 @@ def draw_shadow(
 
 def load_and_crop_source(path: Path, kind: str) -> SourceImage:
     return SourceImage(path=path, kind=kind, image=crop_to_alpha(load_image(path)))
-

@@ -20,44 +20,48 @@ from seed_moth_poc.data_prep.commons import (
 
 PALETTES: list[dict[str, object]] = [
     {
-        "name": "clean_warm",
-        "top_left": (247, 244, 236),
-        "top_right": (242, 238, 228),
-        "bottom_left": (236, 230, 218),
-        "bottom_right": (230, 223, 212),
-        "noise": 12,
-        "stain_strength": 20,
-        "speck_count": (12, 28),
+        "name": "paper_white",
+        "weight": 3.5,
+        "top_left": (251, 249, 244),
+        "top_right": (248, 245, 238),
+        "bottom_left": (244, 238, 228),
+        "bottom_right": (238, 231, 220),
+        "noise": 6,
+        "stain_strength": 8,
+        "speck_count": (4, 10),
     },
     {
-        "name": "glue_yellow",
-        "top_left": (244, 236, 198),
-        "top_right": (238, 228, 182),
-        "bottom_left": (224, 210, 160),
-        "bottom_right": (212, 196, 144),
-        "noise": 14,
-        "stain_strength": 34,
-        "speck_count": (18, 40),
+        "name": "warm_ivory",
+        "weight": 3.0,
+        "top_left": (248, 244, 232),
+        "top_right": (245, 241, 227),
+        "bottom_left": (238, 232, 216),
+        "bottom_right": (232, 225, 208),
+        "noise": 7,
+        "stain_strength": 10,
+        "speck_count": (6, 14),
     },
     {
-        "name": "dusty_gray",
-        "top_left": (236, 236, 234),
-        "top_right": (228, 228, 224),
-        "bottom_left": (218, 216, 210),
-        "bottom_right": (208, 204, 198),
-        "noise": 16,
-        "stain_strength": 28,
-        "speck_count": (14, 36),
+        "name": "soft_yellow",
+        "weight": 2.0,
+        "top_left": (247, 241, 220),
+        "top_right": (244, 237, 211),
+        "bottom_left": (237, 229, 198),
+        "bottom_right": (230, 221, 188),
+        "noise": 8,
+        "stain_strength": 12,
+        "speck_count": (7, 16),
     },
     {
-        "name": "aged_beige",
-        "top_left": (241, 232, 214),
-        "top_right": (234, 225, 205),
-        "bottom_left": (223, 214, 190),
-        "bottom_right": (213, 204, 180),
-        "noise": 18,
-        "stain_strength": 40,
-        "speck_count": (22, 52),
+        "name": "dirty_cream",
+        "weight": 1.1,
+        "top_left": (244, 236, 220),
+        "top_right": (240, 231, 212),
+        "bottom_left": (232, 223, 202),
+        "bottom_right": (225, 215, 193),
+        "noise": 9,
+        "stain_strength": 14,
+        "speck_count": (8, 18),
     },
 ]
 
@@ -135,7 +139,7 @@ def add_low_frequency_noise(
             noise.set_pixel(x, y, (r, g, b, 255))
 
     noise = resize_bilinear(noise, image.width, image.height)
-    opacity = 0.08 + rng.random() * 0.08
+    opacity = 0.04 + rng.random() * 0.05
     for index in range(image.width * image.height):
         base = index * 4
         image.pixels[base] = clamp(
@@ -160,29 +164,29 @@ def add_soft_stains(image: ImageBuffer, rng: random.Random, palette_name: str, s
     stain_width = max(8, image.width // 16)
     stain_height = max(8, image.height // 16)
     stains = ImageBuffer.blank(stain_width, stain_height, (0, 0, 0, 0))
-    stain_count = rng.randint(6, 12)
+    stain_count = rng.randint(2, 5)
     for _ in range(stain_count):
         cx = rng.randint(0, stain_width - 1)
         cy = rng.randint(0, stain_height - 1)
-        rx = rng.randint(max(2, stain_width // 16), max(4, stain_width // 4))
-        ry = rng.randint(max(2, stain_height // 16), max(4, stain_height // 4))
-        if palette_name == "dusty_gray":
-            tone = (rng.randint(140, 190), rng.randint(130, 180), rng.randint(120, 170))
+        rx = rng.randint(max(2, stain_width // 20), max(4, stain_width // 6))
+        ry = rng.randint(max(2, stain_height // 20), max(4, stain_height // 6))
+        if palette_name == "soft_yellow":
+            tone = (rng.randint(236, 248), rng.randint(228, 242), rng.randint(192, 214))
         else:
-            tone = (rng.randint(160, 210), rng.randint(130, 180), rng.randint(90, 140))
-        alpha = rng.randint(max(12, strength // 4), max(24, strength))
+            tone = (rng.randint(238, 248), rng.randint(232, 244), rng.randint(220, 236))
+        alpha = rng.randint(max(4, strength // 4), max(10, strength))
         draw_filled_ellipse(stains, cx, cy, rx, ry, (tone[0], tone[1], tone[2], alpha))
 
-    for _ in range(rng.randint(2, 5)):
+    for _ in range(rng.randint(1, 3)):
         x1 = rng.randint(0, stain_width - 1)
         y1 = rng.randint(0, stain_height - 1)
         x2 = rng.randint(0, stain_width - 1)
         y2 = rng.randint(0, stain_height - 1)
         tone = (
-            rng.randint(110, 180),
-            rng.randint(90, 150),
-            rng.randint(70, 120),
-            rng.randint(10, max(20, strength // 2)),
+            rng.randint(180, 220),
+            rng.randint(170, 210),
+            rng.randint(150, 195),
+            rng.randint(6, max(14, strength)),
         )
         draw_line(stains, x1, y1, x2, y2, tone, thickness=rng.randint(1, 2))
 
@@ -209,35 +213,89 @@ def add_soft_stains(image: ImageBuffer, rng: random.Random, palette_name: str, s
         )
 
 
+def add_sheen(image: ImageBuffer, rng: random.Random, palette_name: str) -> None:
+    """Add a broad glossy highlight that mimics sticky trap shine."""
+    sheen_width = max(16, image.width // 10)
+    sheen_height = max(16, image.height // 10)
+    sheen = ImageBuffer.blank(sheen_width, sheen_height, (0, 0, 0, 0))
+    sheen_count = rng.randint(2, 4)
+    for _ in range(sheen_count):
+        cx = rng.randint(0, sheen_width - 1)
+        cy = rng.randint(0, sheen_height - 1)
+        rx = rng.randint(max(3, sheen_width // 8), max(5, sheen_width // 3))
+        ry = rng.randint(max(2, sheen_height // 10), max(4, sheen_height // 5))
+        if palette_name == "soft_yellow":
+            tone = (255, 249, 233)
+        else:
+            tone = (255, 252, 244)
+        alpha = rng.randint(4, 14)
+        draw_filled_ellipse(sheen, cx, cy, rx, ry, (tone[0], tone[1], tone[2], alpha))
+
+    for _ in range(rng.randint(1, 2)):
+        x1 = rng.randint(0, sheen_width - 1)
+        y1 = rng.randint(0, sheen_height - 1)
+        x2 = rng.randint(0, sheen_width - 1)
+        y2 = rng.randint(0, sheen_height - 1)
+        tone = (255, 250, 238, rng.randint(3, 8))
+        draw_line(sheen, x1, y1, x2, y2, tone, thickness=1)
+
+    sheen = resize_bilinear(sheen, image.width, image.height)
+    for index in range(image.width * image.height):
+        base = index * 4
+        alpha = sheen.pixels[base + 3] / 255.0
+        if alpha <= 0:
+            continue
+        image.pixels[base] = clamp(
+            int(round(image.pixels[base] * (1.0 - alpha) + sheen.pixels[base] * alpha))
+        )
+        image.pixels[base + 1] = clamp(
+            int(round(
+                image.pixels[base + 1] * (1.0 - alpha)
+                + sheen.pixels[base + 1] * alpha
+            ))
+        )
+        image.pixels[base + 2] = clamp(
+            int(round(
+                image.pixels[base + 2] * (1.0 - alpha)
+                + sheen.pixels[base + 2] * alpha
+            ))
+        )
+
+
 def add_debris(image: ImageBuffer, rng: random.Random, count_range: tuple[int, int]) -> None:
-    """Draw small specks and scratches that mimic trap debris."""
+    """Draw small dust specks and faint scratches that mimic trap debris."""
     count = rng.randint(count_range[0], count_range[1])
     for _ in range(count):
         x = rng.randint(0, image.width - 1)
         y = rng.randint(0, image.height - 1)
-        radius = rng.randint(1, 4)
-        if rng.random() < 0.7:
+        radius = rng.randint(1, 2)
+        if rng.random() < 0.8:
             tone = (
-                rng.randint(75, 130),
+                rng.randint(90, 145),
+                rng.randint(82, 132),
                 rng.randint(60, 110),
-                rng.randint(45, 90),
-                rng.randint(80, 180),
+                rng.randint(40, 120),
             )
         else:
             tone = (
-                rng.randint(180, 220),
-                rng.randint(170, 210),
-                rng.randint(150, 190),
-                rng.randint(40, 100),
+                rng.randint(190, 235),
+                rng.randint(182, 228),
+                rng.randint(160, 214),
+                rng.randint(30, 80),
             )
         draw_filled_circle(image, x, y, radius, tone)
 
-    for _ in range(rng.randint(2, 5)):
+    for _ in range(rng.randint(0, 2)):
         x1 = rng.randint(0, image.width - 1)
         y1 = rng.randint(0, image.height - 1)
         x2 = min(image.width - 1, max(0, x1 + rng.randint(-120, 120)))
         y2 = min(image.height - 1, max(0, y1 + rng.randint(-60, 60)))
-        tone = (rng.randint(90, 150), rng.randint(70, 120), rng.randint(50, 100), rng.randint(35, 90))
+        tone = (
+            rng.randint(140, 190),
+            rng.randint(128, 176),
+            rng.randint(110, 150),
+            rng.randint(18, 60),
+        )
         draw_line(image, x1, y1, x2, y2, tone, thickness=rng.randint(1, 2))
 
 
@@ -247,9 +305,9 @@ def apply_lighting(image: ImageBuffer, rng: random.Random) -> None:
     center_y = rng.uniform(0.2, 0.7) * image.height
     radius_x = max(1.0, image.width * rng.uniform(0.7, 1.2))
     radius_y = max(1.0, image.height * rng.uniform(0.7, 1.2))
-    strength = rng.uniform(0.03, 0.12)
-    vignette = rng.uniform(0.10, 0.24)
-    hue_shift = rng.uniform(0.95, 1.05)
+    strength = rng.uniform(0.02, 0.08)
+    vignette = rng.uniform(0.04, 0.14)
+    hue_shift = rng.uniform(0.98, 1.03)
 
     for y in range(image.height):
         for x in range(image.width):
@@ -273,7 +331,7 @@ def apply_lighting(image: ImageBuffer, rng: random.Random) -> None:
 
 def build_background(rng: random.Random, width: int, height: int) -> tuple[ImageBuffer, dict[str, object]]:
     """Build one procedural background and return its metadata."""
-    preset = rng.choice(PALETTES)
+    preset = rng.choices(PALETTES, weights=[float(p["weight"]) for p in PALETTES], k=1)[0]
     base = ImageBuffer.blank(width, height, (0, 0, 0, 255))
     fill_gradient(
         base,
@@ -284,6 +342,7 @@ def build_background(rng: random.Random, width: int, height: int) -> tuple[Image
     )
     add_low_frequency_noise(base, rng, strength=int(preset["noise"]))
     add_soft_stains(base, rng, str(preset["name"]), int(preset["stain_strength"]))
+    add_sheen(base, rng, str(preset["name"]))
     add_debris(base, rng, tuple(preset["speck_count"]))  # type: ignore[arg-type]
     apply_lighting(base, rng)
 

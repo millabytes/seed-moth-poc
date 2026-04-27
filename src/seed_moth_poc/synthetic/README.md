@@ -1,7 +1,7 @@
 # Synthetic Generation
 
-This package generates synthetic trap images by compositing extracted moth
-cutouts onto procedural trap-like backgrounds.
+This package generates synthetic trap images by compositing bbox-derived moth
+cutouts onto trap-like backgrounds.
 
 If `uv` reports a cache permission error on your machine, prefix the command
 with `UV_CACHE_DIR=/tmp/uv-cache`.
@@ -14,19 +14,20 @@ The generator uses the `Stenoma catenifer` screening aid PDF as a prior for:
 
 The visual source comes from:
 
-- `data/reference/derived/cutouts/`
+- `data/reference/derived/cutouts/images/`
 - `data/backgrounds/generated/`
 
 ## Prerequisites
 
-Run the data-preparation pipeline first, describer [here](src/seed_moth_poc/data_prep/README.md).
+Run the data-preparation pipeline first, described
+[here](src/seed_moth_poc/data_prep/README.md).
 
 ## Generate synthetic data
 
 ```bash
 uv run src/seed_moth_poc/synthetic/generator.py \
   --backgrounds data/backgrounds/generated \
-  --sources-root data/reference/derived/cutouts \
+  --sources-root data/reference/derived/cutouts/images \
   --output-root data/synthetic \
   --count 120 \
   --seed 42
@@ -38,5 +39,8 @@ Outputs:
 - `data/synthetic/labels/`
 - `data/synthetic/manifest.json`
 
-The generator writes YOLO labels and a JSON manifest with the source cutouts,
+The generator writes YOLO labels and a JSON manifest with the source cutout,
 background file, and bounding boxes used for each synthetic image.
+
+By default the generator avoids empty scenes. If you want negative examples, set
+`--empty-prob` explicitly.
